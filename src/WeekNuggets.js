@@ -21,8 +21,7 @@ export const WeekNuggets = ({ week, ...props }) => {
 }
 
 const Nugget = ({ nuggets, type, content, index, ...props }) => {
-  const { name, subtype, text, subtitle, description } = content
-  const { authors, artists, speakers } = content
+  const { name, subtype, text, subtitle, description, participants } = content
 
   const { hovered_nugget, set_hovered_nugget } = props
   const { selected_nugget, set_selected_nugget } = props
@@ -73,11 +72,9 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
         {is_selected && (
           <Details>
             <Subtitle>{subtitle}</Subtitle>
-            {speakers && (
-              <Participants participants={speakers} type="speakers" />
+            {participants && (
+              <Participants participants={participants} subtype={subtype} />
             )}
-            {authors && <Participants participants={authors} type="authors" />}
-            {artists && <Participants participants={artists} type="artists" />}
             {description && (
               <EditableText
                 id={`textarea-${type}`}
@@ -93,19 +90,28 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
   )
 }
 
-const Participants = ({ participants, type }) => {
+const Participants = ({ participants, subtype }) => {
   if (!participants || !participants.length) return null
+  const label = participants_types[subtype]
   return (
     <List>
-      <Heading>{type}:</Heading>
-      {participants.map((participant, index) => (
-        <Span key={`${type}-${index}`}>
+      <Heading>{label}:</Heading>
+      {participants.split('\n').map((participant, index) => (
+        <Span key={`${label}-${index}`}>
           {index > 0 && <Separator>✽</Separator>}
           {participant}
         </Span>
       ))}
     </List>
   )
+}
+
+const participants_types = {
+  talk: 'speakers',
+  project: 'artists',
+  exhibition: 'artists',
+  book: 'authors',
+  quote: 'authors',
 }
 
 const Nuggets = Component.w55p.flex.flex_column.div()

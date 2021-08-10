@@ -2,7 +2,7 @@ import { Component } from './flags'
 
 export const WeekDates = ({ week }) => {
   const { color, background } = week.color_harmonies.dates
-  const [beginning, end] = week.dates
+  const [beginning, end] = week.dates.split('\n')
 
   return (
     <Wrapper style={{ background, color }}>

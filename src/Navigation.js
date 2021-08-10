@@ -2,10 +2,13 @@ import { weeks_content } from './weeks_content.data'
 import { update_indexes } from './toolbox'
 import { Component, Div } from './flags'
 
-export const Navigation = ({ week, ...props }) => {
+export const Navigation = ({ week, weeks_data, ...props }) => {
   const { selected_week_index, set_selected_week_index } = props
   const { background, color } = week.color_harmonies.navigation
-  const { next_index, prev_index } = update_indexes(selected_week_index)
+  const { next_index, prev_index } = update_indexes(
+    selected_week_index,
+    weeks_data,
+  )
 
   return (
     <Wrapper style={{ background, color }}>

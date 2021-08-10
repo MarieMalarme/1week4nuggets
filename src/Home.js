@@ -1,122 +1,101 @@
 import { useState, useEffect } from 'react'
-import { weeks_content } from './weeks_content.data'
-import { update_indexes, get_color_harmony, nuggets_types } from './toolbox'
+import { get_color_harmony } from './toolbox'
 import { Component } from './flags'
-import { Navigation } from './Navigation'
-import { WeekDates } from './WeekDates'
-import { WeekWork } from './WeekWork'
-import { WeekNuggets } from './WeekNuggets'
+import { WeekContent } from './WeekContent'
 
 const Home = () => {
-  const [selected_week_index, set_selected_week_index] = useState(0)
-  const selected_week = weeks_data[selected_week_index]
-  const [selected_nugget, set_selected_nugget] = useState(null)
-  const [hovered_nugget, set_hovered_nugget] = useState(null)
-  const [is_editing, set_is_editing] = useState(false)
-
-  // hooks to set events' listeners
-  useEffect(() => {
-    // change week with mousewheel's scroll
-    let timeout
-    const update_week_index = (event) => {
-      if (is_editing) return
-      // triggers the event only when the mouse wheel event is consequent enough
-      if (event.deltaY > -20 && event.deltaY < 20) return
-      const scrolling_down = event.deltaY > 0
-      const { next_index, prev_index } = update_indexes(selected_week_index)
-      const new_index = scrolling_down ? next_index : prev_index
-      // timeout to not spam the mousewheel event
-      clearTimeout(timeout)
-      timeout = setTimeout(() => set_selected_week_index(new_index), 100)
-    }
-
-    window.addEventListener('mousewheel', update_week_index)
-    return () => window.removeEventListener('mousewheel', update_week_index)
-  }, [selected_week_index, is_editing])
+  const [weeks_data, set_weeks_data] = useState([])
 
   useEffect(() => {
-    const handle_keydown = (event) => {
-      if (is_editing) return
-      const { key } = event
+    const { gapi } = window
+    gapi.load('client', async () => {
+      const { client } = gapi
+      await client.init({ apiKey: api_key })
 
-      switch (key) {
-        // change week with keyboard's left & right arrows
-        case 'ArrowRight':
-        case 'ArrowLeft': {
-          const { prev_index, next_index } = update_indexes(selected_week_index)
-          if (key === 'ArrowRight') set_selected_week_index(next_index)
-          if (key === 'ArrowLeft') set_selected_week_index(prev_index)
-          break
-        }
-        // change hovered nugget with keyboard's up & down arrows
-        case 'ArrowDown':
-        case 'ArrowUp': {
-          const current_index = nuggets_types.indexOf(hovered_nugget)
-          const { prev_index, next_index } = update_indexes(current_index, true)
-          if (key === 'ArrowUp') set_hovered_nugget(nuggets_types[prev_index])
-          if (key === 'ArrowDown') set_hovered_nugget(nuggets_types[next_index])
-          break
-        }
-        // change selected nugget with keyboard's Enter
-        case 'Enter':
-          set_selected_nugget(hovered_nugget)
-          break
-        // clear selected nugget with keyboard's Escape
-        case 'Escape':
-          set_selected_nugget(null)
-          break
+      client.load('sheets', 'v4', async () => {
+        const response = await client.sheets.spreadsheets.values.batchGet({
+          spreadsheetId: spreadsheet_id,
+          ranges: [weeks_range, nuggets_range],
+        })
 
-        default:
-          return
-      }
-    }
+        // extract data from the 2 queried ranges and format into arrays of objects
+        const [weeks, nuggets] = response.result.valueRanges.map((range) => {
+          // extract for each range the first row as an array containing column names:
+          // example → ['type', 'name', 'date']
+          // extract the other rows as an array of arrays containing data:
+          // example → [['event', 'The mouse conference', 'May 2019'], ['book', 'Torrent', 'June 2021']]
+          const [column_names, ...rows] = range.values
 
-    window.addEventListener('keydown', handle_keydown)
-    return () => window.removeEventListener('keydown', handle_keydown)
-  }, [selected_week_index, hovered_nugget, is_editing])
+          // convert the rows' arrays into objects
+          return rows.map((columns) => {
+            const column_entries = columns.map((value, index) =>
+              // generate a 2-value array for each column
+              // containing the column name and the column value
+              // example 1 → ['name', 'The Mouse conference']
+              // example 2 → ['subtype', 'talk']
+              [column_names[index], value],
+            )
+            // create an object with key-value pairs from the 2-value arrays
+            // from → [['name', 'The Mouse conference'], ['subtype', 'talk']]
+            // into → { name: 'The Mouse conference', subtype: 'talk' }
+            return Object.fromEntries(column_entries)
+          })
+        })
+
+        // convert the data into objects assigned by week
+        const nuggets_per_week = weeks.map((week) => ({
+          ...week,
+          // dispatch & format as an object all the nuggets in their correponding week
+          // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
+          nuggets: Object.fromEntries(
+            nuggets
+              .filter((nugget) => nugget.week_id === week.id)
+              .map((nugget) => {
+                // extract & ignore 'week_id' property since each nugget
+                // is now contained in the correponding week
+                const { week_id, type, subtype, ...nugget_content } = nugget
+                // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
+                // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
+                return [type || subtype, { ...nugget_content, subtype }]
+              }),
+          ),
+          // create & add color harmonies for page sections in each week object
+          color_harmonies: {
+            dates: get_color_harmony(),
+            work: get_color_harmony({ darker: true }),
+            navigation: get_color_harmony(),
+          },
+        }))
+
+        set_weeks_data(nuggets_per_week)
+      })
+    })
+  }, [])
+
+  // to do: make a proper loader
+  if (!weeks_data.length) return 'Loading nuggets'
 
   return (
     <Page>
-      <WeekContent>
-        <WeekDates week={selected_week} />
-        <WeekNuggets
-          week={selected_week}
-          is_editing={is_editing}
-          set_is_editing={set_is_editing}
-          selected_nugget={selected_nugget}
-          set_selected_nugget={set_selected_nugget}
-          hovered_nugget={hovered_nugget}
-          set_hovered_nugget={set_hovered_nugget}
-        />
-        <RightPanel>
-          <WeekWork
-            week={selected_week}
-            selected_week_index={selected_week_index}
-            selected_nugget={selected_nugget}
-          />
-          <Navigation
-            week={selected_week}
-            selected_week_index={selected_week_index}
-            set_selected_week_index={set_selected_week_index}
-          />
-        </RightPanel>
-      </WeekContent>
+      <WeekContent weeks_data={weeks_data} />
     </Page>
   )
 }
 
-// create & add color harmonies for page sections in each week object
-const weeks_data = weeks_content.map((week) => ({
-  ...week,
-  color_harmonies: {
-    dates: get_color_harmony(),
-    work: get_color_harmony({ darker: true }),
-    navigation: get_color_harmony(),
-  },
-}))
+const api_key = process.env.REACT_APP_API_KEY
+const spreadsheet_id = process.env.REACT_APP_SPREADSHEET_ID
+
+// to do: calculate dynamically the weeks' amount
+// between now and the first week written in the data
+const weeks_amount = 3
+const nuggets_amount = weeks_amount * 4
+
+// to do: get the columns letters dynamically
+// query the ranges - based on the amount of weeks & nuggets to get the rows,
+// and add + 1 to amounts to get the columns names' row as well
+const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
+const nuggets_range = `'Nuggets'!A1:K${nuggets_amount + 1}`
 
 const Page = Component.fixed.w100vw.div()
-const WeekContent = Component.h100vh.w100p.flex.jc_between.div()
-const RightPanel = Component.w40p.flex.flex_column.jc_between.div()
 
 export default Home

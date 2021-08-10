@@ -1,5 +1,3 @@
-import { weeks_content } from './weeks_content.data'
-
 export const random = (min, max) => {
   min = Math.ceil(min)
   max = Math.floor(max)
@@ -32,10 +30,7 @@ export const get_color_harmony = ({ darker } = {}) => {
 }
 
 // get next & prev indexes of a given current index passed as argument;
-// aurgument 'nuggets' is optional: sets the array reference to 'nuggets_types'
-// the default array is 'weeks_content'
-export const update_indexes = (current_index, nuggets) => {
-  const array = nuggets ? nuggets_types : weeks_content
+export const update_indexes = (current_index, array) => {
   const last_index = array.length - 1
   const is_first_index = current_index === 0
   const is_last_index = current_index === last_index
@@ -43,6 +38,3 @@ export const update_indexes = (current_index, nuggets) => {
   const prev_index = is_first_index ? last_index : current_index - 1
   return { next_index, prev_index }
 }
-
-// get the list of all types of nuggets from a week
-export const nuggets_types = Object.keys(weeks_content[0].nuggets)
