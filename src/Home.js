@@ -72,8 +72,9 @@ const Home = () => {
     })
   }, [])
 
-  // to do: make a proper loader
-  if (!weeks_data.length) return 'Loading nuggets'
+  if (!weeks_data.length) {
+    return <Loader>Loading nuggets from Google Sheets...</Loader>
+  }
 
   return (
     <Page>
@@ -97,5 +98,6 @@ const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
 const nuggets_range = `'Nuggets'!A1:K${nuggets_amount + 1}`
 
 const Page = Component.fixed.w100vw.div()
+const Loader = Component.fixed.b70.l80.fs50.div()
 
 export default Home
