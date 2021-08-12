@@ -6,9 +6,11 @@ atomizify({
     clamp: `display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;`,
-    clamp2: `-webkit-line-clamp: 2`,
-    clamp1: `-webkit-line-clamp: 1`,
-    ml_command: `margin-left: -120px`,
+    clamp2: '-webkit-line-clamp: 2',
+    clamp1: '-webkit-line-clamp: 1',
+    ml_command: 'margin-left: -120px',
+    t_40: 'top: -40px',
+    r25: 'right: 25px',
   },
 })
 
