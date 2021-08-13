@@ -58,9 +58,13 @@ export const EditableText = ({ value, row, column, ...props }) => {
       log_error(error, 'updating the spreadsheet')
 
       // store the update error to be displayed in the update banner
+      const { code } = error?.result?.error || error
       set_last_data_update({
         date: new Date(),
-        event: `Failed to update column ${column}`,
+        event:
+          code === 401 // indicate if the error is unauthorized user
+            ? 'You need to be signed in as an authorized user to update the data'
+            : `Failed to update column ${column}`,
       })
     }
   }
