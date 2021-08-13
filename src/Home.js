@@ -1,41 +1,62 @@
 import { useState, useEffect } from 'react'
-import { get_color_harmony } from './toolbox'
+import { log_error, get_color_harmony } from './toolbox'
 import { Component } from './flags'
 import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
 
 const Home = () => {
   const [weeks_data, set_weeks_data] = useState([])
+  const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
+  // to do: display the last update time
+  const [last_data_update, set_last_data_update] = useState(false)
 
+  // load the google api client library
   useEffect(() => {
-    // load the api client library
     window.gapi.load('client', async () => {
       try {
-        const { client, auth2 } = window.gapi
-        await client.init(gapi_request_params)
+        await window.gapi.client.init(gapi_request_params)
+        set_gapi_loaded(true)
+      } catch (error) {
+        log_error(error, 'loading google API')
+      }
+    })
+  }, [])
 
-        // handle the initial auth state
-        set_is_signed_in(auth2.getAuthInstance().isSignedIn.get())
+  // handle google authentication
+  useEffect(() => {
+    if (!gapi_loaded) return
+    try {
+      const { isSignedIn } = window.gapi.auth2.getAuthInstance() // get current auth instance
+      isSignedIn.listen(set_is_signed_in) // listen for auth state changes
+      set_is_signed_in(isSignedIn.get()) // set the initial auth state
+    } catch (error) {
+      log_error(error, 'handling google authentication')
+    }
+  }, [gapi_loaded])
 
-        // listen for auth state changes
-        auth2.getAuthInstance().isSignedIn.listen(set_is_signed_in)
-
-        // fetch the spreadsheet's data
+  // fetch the spreadsheet's data
+  useEffect(() => {
+    if (!gapi_loaded) return
+    const fetch_spreadsheet_data = async () => {
+      try {
+        // send request with the spreadsheet's id and queried ranges
+        const { client } = window.gapi
         const response = await client.sheets.spreadsheets.values.batchGet({
           spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
           ranges: [weeks_range, nuggets_range],
         })
 
         // format the fetched data and set it to the state
-        const formatted_weeks_data = format_spreadsheet_data(response)
-        set_weeks_data(formatted_weeks_data)
+        set_weeks_data(format_spreadsheet_data(response))
       } catch (error) {
-        console.log(error)
+        log_error(error, 'querying the spreadsheet')
       }
-    })
-  }, [])
+    }
+    fetch_spreadsheet_data()
+  }, [gapi_loaded, last_data_update])
 
+  // to do: display error if no data
   if (!weeks_data.length) {
     return <Loader>Loading nuggets from Google Sheets...</Loader>
   }
@@ -43,7 +64,10 @@ const Home = () => {
   return (
     <Page>
       <Authentication is_signed_in={is_signed_in} />
-      <WeekContent weeks_data={weeks_data} />
+      <WeekContent
+        weeks_data={weeks_data}
+        set_last_data_update={set_last_data_update}
+      />
     </Page>
   )
 }
@@ -80,8 +104,9 @@ const format_spreadsheet_data = (response) => {
     // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
     nuggets: Object.fromEntries(
       nuggets
+        .map((nugget, index) => ({ row: index + 2, ...nugget }))
         .filter((nugget) => nugget.week_id === week.id)
-        .map((nugget) => {
+        .map((nugget, index) => {
           // extract & ignore 'week_id' property since each nugget
           // is now contained in the correponding week
           const { week_id, type, subtype, ...nugget_content } = nugget
@@ -91,6 +116,7 @@ const format_spreadsheet_data = (response) => {
         }),
     ),
     // create & add color harmonies for page sections in each week object
+    // TO DO: generate color_harmonies in a static array to avoid new harmonies on data refresh
     color_harmonies: {
       dates: get_color_harmony(),
       work: get_color_harmony({ darker: true }),

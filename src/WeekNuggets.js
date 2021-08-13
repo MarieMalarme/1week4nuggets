@@ -24,8 +24,8 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
   const { name, subtype, text, subtitle, description, participants } = content
 
   const { hovered_nugget, set_hovered_nugget } = props
-  const { selected_nugget, set_selected_nugget } = props
-  const { is_editing, set_is_editing } = props
+  const { selected_week_index, selected_nugget, set_selected_nugget } = props
+  const { is_editing, set_is_editing, set_last_data_update } = props
 
   const is_hovered = hovered_nugget === type
   const is_selected = selected_nugget === type
@@ -77,10 +77,13 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
             )}
             {description && (
               <EditableText
-                id={`textarea-${type}`}
                 value={description}
+                row={content.row}
+                column="description"
                 is_editing={is_editing}
                 set_is_editing={set_is_editing}
+                set_last_data_update={set_last_data_update}
+                selected_week_index={selected_week_index}
               />
             )}
           </Details>
