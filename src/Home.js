@@ -100,7 +100,7 @@ const format_spreadsheet_data = (response) => {
   })
 
   // convert the data into objects assigned by week
-  const nuggets_per_week = weeks.map((week) => ({
+  const nuggets_per_week = weeks.map((week, week_index) => ({
     ...week,
     // dispatch & format as an object all the nuggets in their correponding week
     // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
@@ -108,7 +108,7 @@ const format_spreadsheet_data = (response) => {
       nuggets
         .map((nugget, index) => ({ row: index + 2, ...nugget }))
         .filter((nugget) => nugget.week_id === week.id)
-        .map((nugget, index) => {
+        .map((nugget) => {
           // extract & ignore 'week_id' property since each nugget
           // is now contained in the correponding week
           const { week_id, type, subtype, ...nugget_content } = nugget
@@ -117,13 +117,8 @@ const format_spreadsheet_data = (response) => {
           return [type || subtype, { ...nugget_content, subtype }]
         }),
     ),
-    // create & add color harmonies for page sections in each week object
-    // TO DO: generate color_harmonies in a static array to avoid new harmonies on data refresh
-    color_harmonies: {
-      dates: get_color_harmony(),
-      work: get_color_harmony({ darker: true }),
-      navigation: get_color_harmony(),
-    },
+    // assign color harmonies for page sections in each week object
+    color_harmonies: color_harmonies[week_index],
   }))
 
   return nuggets_per_week
@@ -147,6 +142,12 @@ const nuggets_amount = weeks_amount * 4
 // and add + 1 to amounts to get the columns names' row as well
 const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
 const nuggets_range = `'Nuggets'!A1:K${nuggets_amount + 1}`
+
+const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
+  dates: get_color_harmony(),
+  work: get_color_harmony({ darker: true }),
+  navigation: get_color_harmony(),
+}))
 
 const Page = Component.fixed.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
