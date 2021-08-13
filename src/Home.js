@@ -3,6 +3,7 @@ import { log_error, get_color_harmony } from './toolbox'
 import { Component } from './flags'
 import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
+import { UpdateBanner } from './UpdateBanner'
 
 const Home = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
@@ -64,6 +65,7 @@ const Home = () => {
   return (
     <Page>
       <Authentication is_signed_in={is_signed_in} />
+      <UpdateBanner last_data_update={last_data_update} />
       <WeekContent
         weeks_data={weeks_data}
         set_last_data_update={set_last_data_update}
