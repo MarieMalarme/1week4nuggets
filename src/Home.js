@@ -5,7 +5,7 @@ import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
 
 const Home = () => {
-  const [weeks_data, set_weeks_data] = useState([])
+  const [weeks_data, set_weeks_data] = useState('loading')
   const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
   // to do: display the last update time
@@ -56,10 +56,11 @@ const Home = () => {
     fetch_spreadsheet_data()
   }, [gapi_loaded, last_data_update])
 
-  // to do: display error if no data
-  if (!weeks_data.length) {
-    return <Loader>Loading nuggets from Google Sheets...</Loader>
-  }
+  if (weeks_data === 'loading')
+    return <Feedback>Loading nuggets from spreadsheet...</Feedback>
+
+  if (!weeks_data.length)
+    return <Feedback>No data in the spreadsheet!</Feedback>
 
   return (
     <Page>
@@ -73,6 +74,8 @@ const Home = () => {
 }
 
 const format_spreadsheet_data = (response) => {
+  // return an empty array if no values are found in the specified range
+  if (!response?.result?.valueRanges?.some((range) => range.values)) return []
   // extract data from the 2 queried ranges and format into arrays of objects
   const [weeks, nuggets] = response.result.valueRanges.map((range) => {
     // extract for each range the first row as an array containing column names:
@@ -147,6 +150,6 @@ const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
 const nuggets_range = `'Nuggets'!A1:K${nuggets_amount + 1}`
 
 const Page = Component.fixed.w100vw.div()
-const Loader = Component.fixed.b70.l80.fs50.div()
+const Feedback = Component.fixed.b70.l80.fs50.div()
 
 export default Home
