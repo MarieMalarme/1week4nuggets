@@ -8,7 +8,6 @@ const Home = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
   const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
-  // to do: display the last update time
   const [last_data_update, set_last_data_update] = useState(false)
 
   // load the google api client library

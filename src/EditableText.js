@@ -34,13 +34,16 @@ export const EditableText = ({ value, row, column, ...props }) => {
     }
 
     try {
+      console.log(`%c----------------------------------`, 'color: grey')
+      console.log(`%c${new Date().toString().split('GMT')[0]}`, 'color: grey')
+      console.log(`%cWriting to google spreadsheet...`, 'color: dodgerblue')
+
       const { values } = window.gapi.client.sheets.spreadsheets
-      console.log(`%cWriting to google spreadsheet...`, 'color: green')
       const response = await values.update(request)
       set_last_data_update(new Date()) // store the last update time to re-trigger the data fetching
 
       // display the success in console
-      console.log(`%cColumn ${column} successfully updated!`, 'color: lime')
+      console.log(`%cColumn ${column} successfully updated!`, 'color: cyan')
       console.log(
         `%cValue sent to cell G${row}: %c${response.result.updatedData.values[0]}`,
         'color: grey',
