@@ -1,4 +1,3 @@
-import { weeks_content } from './weeks_content.data'
 import { update_indexes } from './toolbox'
 import { Component, Div } from './flags'
 
@@ -14,7 +13,7 @@ export const Navigation = ({ week, weeks_data, ...props }) => {
     <Wrapper style={{ background, color }}>
       <Button onClick={() => set_selected_week_index(next_index)}>Prev</Button>
       <Div>
-        {selected_week_index + 1}/{weeks_content.length}
+        {selected_week_index + 1}/{weeks_data.length}
       </Div>
       <Button onClick={() => set_selected_week_index(prev_index)}>Next</Button>
     </Wrapper>
