@@ -69,6 +69,8 @@ export const EditableText = ({ value, row, column, ...props }) => {
     }
   }
 
+  // get the styled input component corresponding to the type of item
+  const Input = inputs_components[column]
   return (
     <Wrapper>
       <EditingCommands is_editing={is_editing} is_hovered={is_hovered} />
@@ -132,6 +134,11 @@ const EditingCommands = ({ is_editing, is_hovered }) => {
       {text}
     </Command>
   )
+const inputs_components = {
+  name: Component.lh60.ba0.ol_none.span(),
+  subtitle: Component.mt10.fs40.lh45.italic.grey3.mb40.w100p.ba0.ol_none.div(),
+  // to do: white gradient at the end of the input when scroll is needed
+  description: Component.ws_pre_l.lh17.fs14.w100p.ba0.ol_none.div(),
 }
 
 const Wrapper = Component.h100p.relative.div()
