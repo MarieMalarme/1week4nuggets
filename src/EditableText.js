@@ -28,7 +28,7 @@ export const EditableText = ({ value, row, column, ...props }) => {
       spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
       includeValuesInResponse: true,
       valueInputOption: 'USER_ENTERED',
-      range: `'Nuggets'!G${row}`,
+      range: `'Nuggets'!${columns_map[column]}${row}`,
       values: [[new_value]],
       majorDimension: 'ROWS',
     }
@@ -105,6 +105,20 @@ export const EditableText = ({ value, row, column, ...props }) => {
       />
     </Wrapper>
   )
+}
+// to do: generate it from the received spreadsheet's data
+const columns_map = {
+  week_id: 'A',
+  type: 'B',
+  subtype: 'C',
+  name: 'D',
+  subtitle: 'E',
+  participants: 'F',
+  description: 'G',
+  image: 'H',
+  link: 'I',
+  publisher: 'J',
+  date: 'K',
 }
 
 const EditingCommands = ({ is_editing, is_hovered }) => {
