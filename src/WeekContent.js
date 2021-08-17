@@ -6,7 +6,9 @@ import { WeekDates } from './WeekDates'
 import { WeekWork } from './WeekWork'
 import { WeekNuggets } from './WeekNuggets'
 
-export const WeekContent = ({ weeks_data, set_last_data_update }) => {
+export const WeekContent = (props) => {
+  const { weeks_data, set_last_update, is_signed_in } = props
+
   const [selected_week_index, set_selected_week_index] = useState(0)
   const selected_week = weeks_data[selected_week_index]
   const [selected_nugget, set_selected_nugget] = useState(null)
@@ -94,21 +96,16 @@ export const WeekContent = ({ weeks_data, set_last_data_update }) => {
       <WeekDates week={selected_week} />
       <WeekNuggets
         week={selected_week}
-        is_editing={is_editing}
+        is_signed_in={is_signed_in}
         set_is_editing={set_is_editing}
-        selected_week_index={selected_week_index}
         selected_nugget={selected_nugget}
         set_selected_nugget={set_selected_nugget}
         hovered_nugget={hovered_nugget}
         set_hovered_nugget={set_hovered_nugget}
-        set_last_data_update={set_last_data_update}
+        set_last_update={set_last_update}
       />
       <RightPanel>
-        <WeekWork
-          week={selected_week}
-          selected_week_index={selected_week_index}
-          selected_nugget={selected_nugget}
-        />
+        <WeekWork week={selected_week} selected_nugget={selected_nugget} />
         <Navigation
           week={selected_week}
           weeks_data={weeks_data}

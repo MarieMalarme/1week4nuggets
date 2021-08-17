@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Component } from './flags'
 
-export const UpdateBanner = ({ last_data_update }) => {
+export const UpdateBanner = ({ last_update }) => {
   const [visible, set_visible] = useState(false)
 
   useEffect(() => {
-    set_visible(last_data_update)
+    set_visible(last_update)
     clearTimeout(timeout_id)
     timeout_id = setTimeout(() => set_visible(false), 2500)
-  }, [last_data_update])
+  }, [last_update])
 
   return (
     <Banner hidden={!visible} t100={visible} o100={visible}>
-      <Date>{last_data_update?.date?.toString().split('GMT')[0]}</Date>
+      <Date>{last_update?.date?.toString().split('GMT')[0]}</Date>
       <br />
-      {last_data_update?.event}
+      {last_update?.event}
     </Banner>
   )
 }

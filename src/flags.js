@@ -1,8 +1,10 @@
 import { atomizify, flagify } from 'atomizify'
 
+// const classes = atomizify({
 atomizify({
   custom_classes: {
     lh60: 'line-height: 61px',
+    lh45: 'line-height: 45px',
     clamp: `display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;`,
@@ -13,5 +15,7 @@ atomizify({
     r25: 'right: 25px',
   },
 })
+
+// console.log(classes)
 
 export const { Component, Div, Span } = flagify()

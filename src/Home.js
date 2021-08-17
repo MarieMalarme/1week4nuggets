@@ -9,7 +9,7 @@ const Home = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
   const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
-  const [last_data_update, set_last_data_update] = useState(false)
+  const [last_update, set_last_update] = useState(false)
 
   // load the google api client library
   useEffect(() => {
@@ -54,7 +54,7 @@ const Home = () => {
       }
     }
     fetch_spreadsheet_data()
-  }, [gapi_loaded, last_data_update])
+  }, [gapi_loaded, last_update])
 
   if (weeks_data === 'loading')
     return <Feedback>Loading nuggets from spreadsheet...</Feedback>
@@ -65,10 +65,11 @@ const Home = () => {
   return (
     <Page>
       <Authentication is_signed_in={is_signed_in} />
-      <UpdateBanner last_data_update={last_data_update} />
+      <UpdateBanner last_update={last_update} />
       <WeekContent
         weeks_data={weeks_data}
-        set_last_data_update={set_last_data_update}
+        is_signed_in={is_signed_in}
+        set_last_update={set_last_update}
       />
     </Page>
   )

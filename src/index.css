@@ -14,10 +14,20 @@ button {
   font-size: inherit;
 }
 
-textarea {
-  resize: none;
+*::-webkit-scrollbar {
+  display: none;
 }
 
-textarea::-webkit-scrollbar {
-  display: none;
+[contenteditable]:empty:before {
+  content: attr(placeholder);
+  opacity: 40%;
+}
+
+[contenteditable] {
+  caret-color: deeppink;
+}
+
+::selection {
+  background: aquamarine;
+  color: deeppink;
 }
