@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Component, Span } from './flags'
 import { EditableText } from './EditableText'
 
@@ -94,10 +94,15 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
 }
 
 const Participants = ({ participants, subtype }) => {
+  const [is_hovered, set_is_hovered] = useState(false)
   if (!participants || !participants.length) return null
   const label = participants_types[subtype]
+
   return (
-    <List>
+    <List
+      onMouseOver={() => set_is_hovered(true)}
+      onMouseLeave={() => set_is_hovered(false)}
+    >
       <Heading>{label}:</Heading>
       {participants.split('\n').map((participant, index) => (
         <Span key={`${label}-${index}`}>
@@ -105,6 +110,7 @@ const Participants = ({ participants, subtype }) => {
           {participant}
         </Span>
       ))}
+      {is_hovered && <AddButton>+ Add</AddButton>}
     </List>
   )
 }
@@ -123,6 +129,7 @@ const Close =
 const Container = Component.anim_height.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const Tag = Component.flex_shrink0.w100.uppercase.mr30.ls2.fs10.span()
-const List = Component.fs13.mb30.div()
+const List = Component.fs13.flex.mb30.div()
+const AddButton = Component.c_pointer.ml30.grey4.uppercase.ls2.fs10.div()
 const Heading = Component.capitalize.bb.mr30.span()
 const Separator = Component.mh20.span()
