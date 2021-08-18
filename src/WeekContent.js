@@ -15,29 +15,7 @@ export const WeekContent = (props) => {
   const [hovered_nugget, set_hovered_nugget] = useState(null)
   const [is_editing, set_is_editing] = useState(false)
 
-  // hooks to set events' listeners
-  useEffect(() => {
-    // change week with mousewheel's scroll
-    let timeout
-    const update_week_index = (event) => {
-      if (is_editing) return
-      // triggers the event only when the mouse wheel event is consequent enough
-      if (event.deltaY > -20 && event.deltaY < 20) return
-      const scrolling_down = event.deltaY > 0
-      const { next_index, prev_index } = update_indexes(
-        selected_week_index,
-        weeks_data,
-      )
-      const new_index = scrolling_down ? next_index : prev_index
-      // timeout to not spam the mousewheel event
-      clearTimeout(timeout)
-      timeout = setTimeout(() => set_selected_week_index(new_index), 100)
-    }
-
-    window.addEventListener('mousewheel', update_week_index)
-    return () => window.removeEventListener('mousewheel', update_week_index)
-  }, [selected_week_index, is_editing, weeks_data])
-
+  // hooks to set keyboard events' listeners
   useEffect(() => {
     // get the list of all types of nuggets from a week
     const nuggets_types = Object.keys(weeks_data[0].nuggets)
