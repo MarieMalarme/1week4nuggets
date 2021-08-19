@@ -144,7 +144,7 @@ const nuggets_amount = weeks_amount * 4
 // query the ranges - based on the amount of weeks & nuggets to get the rows,
 // and add + 1 to amounts to get the columns names' row as well
 const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
-const nuggets_range = `'Nuggets'!A1:K${nuggets_amount + 1}`
+const nuggets_range = `'Nuggets'!A1:J${nuggets_amount + 1}`
 
 const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
   dates: get_color_harmony(),

@@ -22,7 +22,8 @@ export const WeekNuggets = ({ week, ...props }) => {
 }
 
 const Nugget = ({ nuggets, type, content, index, ...props }) => {
-  const { name, subtype, subtitle, description, participants, row } = content
+  const { name, subtype, subtitle, date } = content
+  const { description, participants, row } = content
 
   const { hovered_nugget, set_hovered_nugget } = props
   const { selected_nugget, set_selected_nugget } = props
@@ -52,7 +53,17 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
       h85p={is_selected}
     >
       {is_selected && <Close onClick={clear_selected_nugget}>✕ Esc</Close>}
-      <Tag mt15={!selected_nugget || is_selected}>— {subtype || type}</Tag>
+      <SideNotes mt15={!selected_nugget || is_selected}>
+        <Tag>— {subtype || type}</Tag>
+        {is_selected && (
+          <EditableText
+            initial_value={date}
+            row={row}
+            column="date"
+            states={states}
+          />
+        )}
+      </SideNotes>
       <Content h100p={is_selected}>
         <EditableText
           initial_value={name}
@@ -66,10 +77,9 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
           clamp1={is_not_selected_one}
           bg_grey9={is_selected && is_hovered}
           white={is_selected && is_hovered}
+          grey9={is_selected && !is_hovered}
           bw2={is_selected && !is_hovered}
           bb={is_selected && !is_hovered}
-          bg_white={is_selected && !is_hovered}
-          grey9={is_selected && !is_hovered}
         />
         {is_selected && (
           <Fragment>
@@ -128,6 +138,7 @@ const Close =
   Component.pa5.absolute.t20.r20.wm_v_rl.text_upright.ls2.fs10.uppercase.c_pointer.div()
 const Container = Component.anim_height.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
-const Tag = Component.flex_shrink0.w100.uppercase.mr30.ls2.fs10.span()
+const SideNotes = Component.flex.flex_column.flex_shrink0.w100.mr30.w100.div()
+const Tag = Component.uppercase.ls2.fs10.span()
 const List = Component.fs13.mb30.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()
