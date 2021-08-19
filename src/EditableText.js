@@ -17,6 +17,10 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
     set_text(initial_value)
   }, [textarea_ref, initial_value])
 
+  // if the user is not signed in, do not display the component when the text is empty
+  // so the user without writing access can't see the placeholder with instructions to edit
+  if (!is_signed_in && !initial_value) return null
+
   // to do: also update spreadsheet after editing stops
   const update_spreadsheet = async (new_value) => {
     const request = {
