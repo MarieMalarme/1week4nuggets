@@ -1,5 +1,5 @@
-import { Fragment, useState } from 'react'
-import { Component, Span } from './flags'
+import { Fragment } from 'react'
+import { Component } from './flags'
 import { EditableText } from './EditableText'
 
 export const WeekNuggets = ({ week, ...props }) => {
@@ -22,7 +22,7 @@ export const WeekNuggets = ({ week, ...props }) => {
 }
 
 const Nugget = ({ nuggets, type, content, index, ...props }) => {
-  const { name, subtype, subtitle, description, participants } = content
+  const { name, subtype, subtitle, description, participants, row } = content
 
   const { hovered_nugget, set_hovered_nugget } = props
   const { selected_nugget, set_selected_nugget } = props
@@ -56,7 +56,7 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
       <Content h100p={is_selected}>
         <EditableText
           initial_value={name}
-          row={content.row}
+          row={row}
           column="name"
           states={states}
           fs50={!selected_nugget || is_selected}
@@ -75,14 +75,19 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
           <Fragment>
             <EditableText
               initial_value={subtitle}
-              row={content.row}
+              row={row}
               column="subtitle"
               states={states}
             />
-            <Participants participants={participants} subtype={subtype} />
+            <Participants
+              participants={participants}
+              subtype={subtype}
+              row={row}
+              states={states}
+            />
             <EditableText
               initial_value={description}
-              row={content.row}
+              row={row}
               column="description"
               states={states}
             />
@@ -93,24 +98,19 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
   )
 }
 
-const Participants = ({ participants, subtype }) => {
-  const [is_hovered, set_is_hovered] = useState(false)
+const Participants = ({ participants, subtype, row, states }) => {
   if (!participants || !participants.length) return null
   const label = participants_types[subtype]
 
   return (
-    <List
-      onMouseOver={() => set_is_hovered(true)}
-      onMouseLeave={() => set_is_hovered(false)}
-    >
+    <List>
       <Heading>{label}:</Heading>
-      {participants.split('\n').map((participant, index) => (
-        <Span key={`${label}-${index}`}>
-          {index > 0 && <Separator>✽</Separator>}
-          {participant}
-        </Span>
-      ))}
-      {is_hovered && <AddButton>+ Add</AddButton>}
+      <EditableText
+        initial_value={participants}
+        row={row}
+        column="participants"
+        states={states}
+      />
     </List>
   )
 }
@@ -129,7 +129,5 @@ const Close =
 const Container = Component.anim_height.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const Tag = Component.flex_shrink0.w100.uppercase.mr30.ls2.fs10.span()
-const List = Component.fs13.flex.mb30.div()
-const AddButton = Component.c_pointer.ml30.grey4.uppercase.ls2.fs10.div()
+const List = Component.fs13.mb30.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()
-const Separator = Component.mh20.span()

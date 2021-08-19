@@ -116,6 +116,7 @@ const columns_map = {
 
 const inputs_components = {
   name: Component.lh60.ol_none.span(),
+  participants: Component.ws_pre_w.ol_none.div(),
   subtitle: Component.mt10.fs40.lh45.italic.grey3.mb40.w100p.ba0.ol_none.div(),
   description: Component.ws_pre_l.lh17.fs14.w100p.ba0.ol_none.div(),
   // to do: white gradient at the end of the input when scroll is needed
