@@ -89,11 +89,12 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
         }}
         onKeyDown={(event) => {
           const pressing_enter = event.key === 'Enter'
+          const pressing_escape = event.key === 'Escape'
           const breaking_line = pressing_enter && event.shiftKey
-          // trigger only when the enter key is pressed alone;
+          // trigger when the enter or escape key is pressed alone;
           // ignore if the enter key is pressed in combination with shift key,
           // so the user can still break lines while editing the textarea
-          if (breaking_line || !pressing_enter) return
+          if (breaking_line || (!pressing_enter && !pressing_escape)) return
           // blur the input to trigger the onBlur event
           // that updates the spreadsheet and exits the edit mode
           textarea_ref.blur()
