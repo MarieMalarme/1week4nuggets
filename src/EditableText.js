@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Div, Component } from './flags'
+import { Component } from './flags'
 import { log_error } from './toolbox'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
@@ -71,7 +71,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
   const Input = inputs_components[column]
 
   return (
-    <Div ofy_scroll={column === 'description'}>
+    <Wrapper ofy_scroll={column === 'description'}>
       <Input
         block={!text?.length}
         elemRef={set_textarea_ref}
@@ -101,7 +101,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
         }}
         {...style}
       />
-    </Div>
+    </Wrapper>
   )
 }
 // to do: generate it from the received spreadsheet's data
@@ -126,3 +126,5 @@ const inputs_components = {
   date: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.mt50.grey3.div(),
   // to do: white gradient at the end of the input when scroll is needed
 }
+
+const Wrapper = Component.w100p.div()
