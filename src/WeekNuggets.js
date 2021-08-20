@@ -136,7 +136,7 @@ const participants_types = {
 const Nuggets = Component.w55p.flex.flex_column.div()
 const Close =
   Component.pa5.absolute.t20.r20.wm_v_rl.text_upright.ls2.fs10.uppercase.c_pointer.div()
-const Container = Component.anim_height.relative.ph30.flex.ai_flex_start.div()
+const Container = Component.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const SideNotes = Component.flex.flex_column.flex_shrink0.w100.mr30.w100.div()
 const Tag = Component.uppercase.ls2.fs10.span()

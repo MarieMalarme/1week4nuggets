@@ -31,3 +31,18 @@ button {
   background: aquamarine;
   color: deeppink;
 }
+
+.gradient {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  pointer-events: none;
+}
+
+.gradient.to-top {
+  background: linear-gradient(to top, transparent, white);
+}
+
+.gradient.to-bottom {
+  background: linear-gradient(to bottom, transparent, white);
+}
