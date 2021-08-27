@@ -4,7 +4,8 @@ import { log_error } from './toolbox'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { states, ...style } = props
-  const { is_selected, is_signed_in, set_is_editing, set_last_update } = states
+  const { is_selected, is_signed_in, nuggets_sheet_columns } = states.variables
+  const { set_is_editing, set_last_update } = states.functions
 
   const [wrapper_ref, set_wrapper_ref] = useState(null)
   const [textarea_ref, set_textarea_ref] = useState(null)
@@ -47,7 +48,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
       spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
       includeValuesInResponse: true,
       valueInputOption: 'USER_ENTERED',
-      range: `'Nuggets'!${columns_map[column]}${row}`,
+      range: `'Nuggets'!${nuggets_sheet_columns[column]}${row}`,
       values: [[new_value]],
       majorDimension: 'ROWS',
     }
@@ -151,20 +152,6 @@ const Gradient = ({ direction, wrapper_ref, fully_scrolled }) => {
   const { top: ref_top, height, width } = wrapper_ref.getBoundingClientRect()
   const top = direction === 'top' ? ref_top : ref_top + height - 100
   return <Div style={{ top, width }} className={`gradient to-${direction}`} />
-}
-
-// to do: generate it from the received spreadsheet's data
-const columns_map = {
-  type: 'A',
-  subtype: 'B',
-  name: 'C',
-  subtitle: 'D',
-  participants: 'E',
-  description: 'F',
-  image: 'G',
-  link: 'H',
-  date: 'I',
-  week_id: 'J',
 }
 
 const inputs_components = {

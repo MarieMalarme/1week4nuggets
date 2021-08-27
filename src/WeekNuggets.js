@@ -28,12 +28,15 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
   const { hovered_nugget, set_hovered_nugget } = props
   const { selected_nugget, set_selected_nugget } = props
   const { is_signed_in, set_is_editing, set_last_update } = props
+  const { nuggets_sheet_columns } = props
 
   const is_hovered = hovered_nugget === type
   const is_selected = selected_nugget === type
   const is_not_selected_one = selected_nugget && !is_selected
 
-  const states = { is_selected, is_signed_in, set_is_editing, set_last_update }
+  const variables = { is_selected, is_signed_in, nuggets_sheet_columns }
+  const functions = { set_last_update, set_is_editing }
+  const states = { variables, functions }
 
   const clear_selected_nugget = () => set_selected_nugget(null)
 

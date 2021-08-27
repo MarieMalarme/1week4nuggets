@@ -1,3 +1,9 @@
+// convert integer to uppercase letter: uppercase alphabet begins at code 65
+// example 1: int_to_letter(0) → 'A'
+// example 2: int_to_letter(1) → 'B'
+// example 3: int_to_letter(5) → 'F'
+export const int_to_letter = (int) => String.fromCharCode(65 + int)
+
 export const random = (min, max) => {
   min = Math.ceil(min)
   max = Math.floor(max)
@@ -35,7 +41,7 @@ export const get_color_harmony = ({ darker } = {}) => {
   }
 }
 
-// get next & prev indexes of a given current index passed as argument;
+// get next & prev indexes of a given current index passed as argument
 export const update_indexes = (current_index, array) => {
   const last_index = array.length - 1
   const is_first_index = current_index === 0
