@@ -2,7 +2,55 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'px grotesk';
+}
+
+@font-face {
+  font-family: 'px grotesk';
+  src: url('./fonts/px_grotesk_light.ttf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'basier';
+  src: url('./fonts/basier.ttf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'bogam';
+  src: url('./fonts/bogam.otf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'chaney';
+  src: url('./fonts/chaney.ttf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'frac';
+  src: url('./fonts/frac.ttf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'migra';
+  src: url('./fonts/migra.ttf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'pluto';
+  src: url('./fonts/pluto.otf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'trash';
+  src: url('./fonts/trash.otf');
+  font-style: normal;
 }
 
 body {
@@ -12,6 +60,8 @@ body {
 button {
   color: inherit;
   font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
 }
 
 *::-webkit-scrollbar {

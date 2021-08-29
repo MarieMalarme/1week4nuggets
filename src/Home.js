@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { log_error, get_color_harmony, int_to_letter } from './toolbox'
+import { log_error, get_color_harmony, int_to_letter, random } from './toolbox'
 import { Component } from './flags'
 import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
@@ -126,6 +126,7 @@ const format_spreadsheet_data = (response) => {
     ),
     // assign color harmonies for page sections in each week object
     color_harmonies: color_harmonies[week_index],
+    fonts: fonts[week_index],
   }))
 
   const nuggets_column_names = response.result.valueRanges[1].values[0]
@@ -161,7 +162,30 @@ const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
   navigation: get_color_harmony(),
 }))
 
-const Page = Component.fixed.w100vw.div()
+// for each week, create a combination of 4 fonts (one per nugget type)
+// picked randomly among the different available fonts
+const fonts = [...Array(weeks_amount).keys()].map(() => {
+  const fonts_list = [
+    { name: 'basier', size: 53, line_height: 69 },
+    { name: 'bogam', size: 65, line_height: 62 },
+    { name: 'chaney', size: 40, line_height: 54 },
+    { name: 'frac', size: 50, line_height: 65 },
+    { name: 'migra', size: 53, line_height: 63 },
+    { name: 'pluto', size: 53, line_height: 70 },
+    { name: 'trash', size: 53, line_height: 57 },
+  ]
+
+  const random_fonts = [...Array(4).keys()].map((index) => {
+    const random_index = random(0, fonts_list.length - 1)
+    const font = fonts_list[random_index]
+    fonts_list.splice(random_index, 1)
+    return font
+  })
+
+  return random_fonts
+})
+
+const Page = Component.fixed.fw200.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
 
 export default Home

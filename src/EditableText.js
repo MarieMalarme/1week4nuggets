@@ -155,9 +155,9 @@ const Gradient = ({ direction, wrapper_ref, fully_scrolled }) => {
 }
 
 const inputs_components = {
-  name: Component.ws_pre_w.lh60.ol_none.span(),
+  name: Component.ws_pre_w.ol_none.span(),
   participants: Component.ws_pre_w.ol_none.div(),
-  subtitle: Component.ws_pre_w.mt10.fs40.lh45.italic.grey3.mb40.ol_none.div(),
+  subtitle: Component.ws_pre_w.mt10.fs40.lh45.grey3.mb40.ol_none.div(),
   description: Component.ws_pre_w.lh17.fs14.w100p.ol_none.div(),
   date: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.mt50.grey3.div(),
 }

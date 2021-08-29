@@ -14,6 +14,7 @@ export const WeekNuggets = ({ week, ...props }) => {
           index={index}
           nuggets={nuggets}
           content={content}
+          font={week.fonts[index]}
           {...props}
         />
       ))}
@@ -21,7 +22,7 @@ export const WeekNuggets = ({ week, ...props }) => {
   )
 }
 
-const Nugget = ({ nuggets, type, content, index, ...props }) => {
+const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
   const { name, subtype, subtitle, date } = content
   const { description, participants, row } = content
 
@@ -73,8 +74,6 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
           row={row}
           column="name"
           states={states}
-          fs50={!selected_nugget || is_selected}
-          fs15={is_not_selected_one}
           clamp={!is_selected}
           clamp2={!is_selected}
           clamp1={is_not_selected_one}
@@ -83,6 +82,11 @@ const Nugget = ({ nuggets, type, content, index, ...props }) => {
           grey9={is_selected && !is_hovered}
           bw2={is_selected && !is_hovered}
           bb={is_selected && !is_hovered}
+          style={{
+            fontFamily: font.name,
+            fontSize: ((!selected_nugget || is_selected) && font.size) || 15,
+            lineHeight: `${font.line_height}px`,
+          }}
         />
         {is_selected && (
           <Fragment>
