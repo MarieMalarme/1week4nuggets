@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { update_indexes } from './toolbox'
 import { Component } from './flags'
 import { Navigation } from './Navigation'
+import { NewWeekButton } from './NewWeekButton'
 import { WeekDates } from './WeekDates'
 import { WeekWork } from './WeekWork'
 import { WeekNuggets } from './WeekNuggets'
@@ -92,10 +93,11 @@ export const WeekContent = (props) => {
           selected_week_index={selected_week_index}
           set_selected_week_index={set_selected_week_index}
         />
+        <NewWeekButton />
       </RightPanel>
     </Wrapper>
   )
 }
 
 const Wrapper = Component.h100vh.w100p.flex.jc_between.div()
-const RightPanel = Component.w40p.flex.flex_column.jc_between.div()
+const RightPanel = Component.w40p.flex.relative.flex_column.jc_between.div()
