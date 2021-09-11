@@ -45,7 +45,7 @@ const Home = () => {
         const { client } = window.gapi
         const response = await client.sheets.spreadsheets.values.batchGet({
           spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
-          ranges: [weeks_range, nuggets_range],
+          ranges: ['Weeks', 'Nuggets'],
         })
 
         // format the fetched data and set it to the state
@@ -106,6 +106,9 @@ const format_spreadsheet_data = (response) => {
     })
   })
 
+  const color_harmonies = generate_color_harmonies(weeks.length)
+  const fonts_combinations = generate_fonts_combinations(weeks.length)
+
   // convert the data into objects assigned by week
   const nuggets_per_week = weeks.map((week, week_index) => ({
     ...week,
@@ -124,9 +127,9 @@ const format_spreadsheet_data = (response) => {
           return [type || subtype, { ...nugget_content, subtype }]
         }),
     ),
-    // assign color harmonies for page sections in each week object
+    // assign color harmonies & fonts combinations for each week object
     color_harmonies: color_harmonies[week_index],
-    fonts: fonts[week_index],
+    fonts: fonts_combinations[week_index],
   }))
 
   const nuggets_column_names = response.result.valueRanges[1].values[0]
@@ -145,45 +148,37 @@ const gapi_request_params = {
   scope: 'https://www.googleapis.com/auth/spreadsheets',
 }
 
-// to do: calculate dynamically the weeks' amount
-// between now and the first week written in the data
-const weeks_amount = 3
-const nuggets_amount = weeks_amount * 4
+// generate a random color harmony (one per section)
+const generate_color_harmonies = (amount) =>
+  [...Array(amount).keys()].map(() => ({
+    dates: get_color_harmony(),
+    work: get_color_harmony({ darker: true }),
+    navigation: get_color_harmony(),
+  }))
 
-// to do: get the columns letters dynamically
-// query the ranges - based on the amount of weeks & nuggets to get the rows,
-// and add + 1 to amounts to get the columns names' row as well
-const weeks_range = `'Weeks'!A1:B${weeks_amount + 1}`
-const nuggets_range = `'Nuggets'!A1:J${nuggets_amount + 1}`
-
-const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
-  dates: get_color_harmony(),
-  work: get_color_harmony({ darker: true }),
-  navigation: get_color_harmony(),
-}))
-
-// for each week, create a combination of 4 fonts (one per nugget type)
+// create a combination of 4 fonts (one per nugget type)
 // picked randomly among the different available fonts
-const fonts = [...Array(weeks_amount).keys()].map(() => {
-  const fonts_list = [
-    { name: 'basier', size: 53, line_height: 69 },
-    { name: 'bogam', size: 65, line_height: 62 },
-    { name: 'chaney', size: 40, line_height: 54 },
-    { name: 'frac', size: 50, line_height: 65 },
-    { name: 'migra', size: 53, line_height: 63 },
-    { name: 'pluto', size: 53, line_height: 70 },
-    { name: 'trash', size: 53, line_height: 57 },
-  ]
+const generate_fonts_combinations = (amount) =>
+  [...Array(amount).keys()].map(() => {
+    const fonts_list = [
+      { name: 'basier', size: 53, line_height: 69 },
+      { name: 'bogam', size: 65, line_height: 62 },
+      { name: 'chaney', size: 40, line_height: 54 },
+      { name: 'frac', size: 50, line_height: 65 },
+      { name: 'migra', size: 53, line_height: 63 },
+      { name: 'pluto', size: 53, line_height: 70 },
+      { name: 'trash', size: 53, line_height: 57 },
+    ]
 
-  const random_fonts = [...Array(4).keys()].map((index) => {
-    const random_index = random(0, fonts_list.length - 1)
-    const font = fonts_list[random_index]
-    fonts_list.splice(random_index, 1)
-    return font
+    const random_fonts = [...Array(4).keys()].map((index) => {
+      const random_index = random(0, fonts_list.length - 1)
+      const font = fonts_list[random_index]
+      fonts_list.splice(random_index, 1)
+      return font
+    })
+
+    return random_fonts
   })
-
-  return random_fonts
-})
 
 const Page = Component.fixed.fw200.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
