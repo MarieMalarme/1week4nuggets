@@ -22,5 +22,5 @@ export const UpdateBanner = ({ last_update }) => {
 let timeout_id
 
 const Banner =
-  Component.w35p.anim_all.grey8.fixed.o0.t80.r20.text_right.ph10.pv5.fs30.div()
+  Component.zi1.w35p.anim_all.grey8.fixed.o0.t80.r20.text_right.ph10.pv5.fs30.div()
 const Date = Component.o30.span()

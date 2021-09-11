@@ -93,7 +93,10 @@ export const WeekContent = (props) => {
           selected_week_index={selected_week_index}
           set_selected_week_index={set_selected_week_index}
         />
-        <NewWeekButton />
+        <NewWeekButton
+          weeks_amount={weeks_data.length}
+          set_last_update={set_last_update}
+        />
       </RightPanel>
     </Wrapper>
   )
