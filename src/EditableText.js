@@ -44,11 +44,12 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
 
   // to do: also update spreadsheet after editing stops
   const update_spreadsheet = async (new_value) => {
+    const cell = `${nuggets_sheet_columns[column]}${row}`
     const request = {
       spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
       includeValuesInResponse: true,
       valueInputOption: 'USER_ENTERED',
-      range: `'Nuggets'!${nuggets_sheet_columns[column]}${row}`,
+      range: `'Nuggets'!${cell}`,
       values: [[new_value]],
       majorDimension: 'ROWS',
     }
@@ -69,7 +70,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
       const updated_value = updated_values && updated_values[0]
       console.log(`%cColumn ${column} successfully updated!`, 'color: cyan')
       console.log(
-        `%cValue sent to cell G${row}: %c${updated_value || 'empty string'}`,
+        `%cValue sent to cell ${cell}: %c${updated_value || 'empty string'}`,
         'color: grey',
         'color: lightgrey',
       )
