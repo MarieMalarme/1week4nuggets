@@ -82,11 +82,7 @@ export const NewWeekButton = ({ weeks_amount, set_last_update, ...props }) => {
     }
   }
 
-  return (
-    <Wrapper>
-      <Button onClick={add_week_to_spreadsheet}>+</Button>
-    </Wrapper>
-  )
+  return <Button onClick={add_week_to_spreadsheet}>+</Button>
 }
 
 const get_week_dates = () => {
@@ -103,6 +99,5 @@ const get_week_dates = () => {
 
 const format_date = (date) => date.toString().padStart(2, '0')
 
-const Wrapper = Component.absolute.b150.w100p.flex.jc_center.div()
 const Button =
-  Component.ba0.ol_none.bg_white.w60.h60.b_rad50p.fs30.c_pointer.button()
+  Component.mb20.ba0.ol_none.bg_white.w50.h50.b_rad50p.fs30.c_pointer.button()
