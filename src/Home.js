@@ -110,27 +110,33 @@ const format_spreadsheet_data = (response) => {
   const fonts_combinations = generate_fonts_combinations(weeks.length)
 
   // convert the data into objects assigned by week
-  const nuggets_per_week = weeks.reverse().map((week, week_index) => ({
-    ...week,
-    // dispatch & format as an object all the nuggets in their correponding week
-    // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
-    nuggets: Object.fromEntries(
-      nuggets
-        .map((nugget, index) => ({ row: index + 2, ...nugget }))
-        .filter((nugget) => nugget.week_id === week.id)
-        .map((nugget) => {
-          // extract & ignore 'week_id' property since each nugget
-          // is now contained in the correponding week
-          const { week_id, type, subtype, ...nugget_content } = nugget
-          // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
-          // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
-          return [type || subtype, { ...nugget_content, subtype }]
-        }),
-    ),
-    // assign color harmonies & fonts combinations for each week object
-    color_harmonies: color_harmonies[week_index],
-    fonts: fonts_combinations[week_index],
-  }))
+  const nuggets_per_week = weeks
+    .map((week, week_index) => ({
+      ...week,
+      // dispatch & format as an object all the nuggets in their correponding week
+      // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
+      row: week_index + 2,
+      nuggets: Object.fromEntries(
+        nuggets
+          .map((nugget, index) => ({
+            row: index + 2,
+            ...nugget,
+          }))
+          .filter((nugget) => nugget.week_id === week.id)
+          .map((nugget) => {
+            // extract & ignore 'week_id' property since each nugget
+            // is now contained in the correponding week
+            const { week_id, type, subtype, ...nugget_content } = nugget
+            // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
+            // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
+            return [type || subtype, { ...nugget_content, subtype }]
+          }),
+      ),
+      // assign color harmonies & fonts combinations for each week object
+      color_harmonies: color_harmonies[week_index],
+      fonts: fonts_combinations[week_index],
+    }))
+    .reverse()
 
   const nuggets_column_names = response.result.valueRanges[1].values[0]
   const nuggets_sheet_columns = Object.fromEntries(

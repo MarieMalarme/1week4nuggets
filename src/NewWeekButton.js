@@ -1,20 +1,25 @@
 import { Component } from './flags'
 import { log_error } from './toolbox'
 
-export const NewWeekButton = ({ weeks_amount, set_last_update, ...props }) => {
+export const NewWeekButton = ({ weeks_data, set_last_update, ...props }) => {
   const { nuggets_sheet_columns } = props
 
   const add_week_to_spreadsheet = async () => {
     const { name, week_id, subtype } = nuggets_sheet_columns
-    const new_week_id = weeks_amount + 1
-    const week_dates = get_week_dates()
+    const last_week_row = Math.max(...weeks_data.map(({ row }) => row))
+    const last_week_id = Math.max(...weeks_data.map(({ id }) => id))
+    const new_week_id = last_week_id + 1
+    const last_nugget_row = Math.max(
+      ...weeks_data.flatMap((week) =>
+        Object.values(week.nuggets).map(({ row }) => row),
+      ),
+    )
 
     // column range of the 4 new nuggets to add for the new week
     // example for column A → 'Nuggets'!A13:A16
     const new_week_nuggets_column_range = (column) => {
-      const nuggets_amount = weeks_amount * 4
-      const new_row_beginning = nuggets_amount + 2
-      const new_row_end = nuggets_amount + 5
+      const new_row_beginning = last_nugget_row + 1
+      const new_row_end = new_row_beginning + 4
       return `'Nuggets'!${column}${new_row_beginning}:${column}${new_row_end}`
     }
 
@@ -24,8 +29,8 @@ export const NewWeekButton = ({ weeks_amount, set_last_update, ...props }) => {
       data: [
         {
           // add a new week in the Weeks spreadsheet with 'id' & 'dates'
-          range: `'Weeks'!A${new_week_id + 1}:B${new_week_id + 1}`,
-          values: [[new_week_id, week_dates]],
+          range: `'Weeks'!A${last_week_row + 1}:B${last_week_row + 1}`,
+          values: [[new_week_id, get_week_dates()]],
           majorDimension: 'ROWS',
         },
         {
