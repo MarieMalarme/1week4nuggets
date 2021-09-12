@@ -96,6 +96,7 @@ export const WeekContent = (props) => {
         <NewWeekButton
           weeks_amount={weeks_data.length}
           set_last_update={set_last_update}
+          nuggets_sheet_columns={nuggets_sheet_columns}
         />
       </RightPanel>
     </Wrapper>

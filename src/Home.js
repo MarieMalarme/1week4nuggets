@@ -110,7 +110,7 @@ const format_spreadsheet_data = (response) => {
   const fonts_combinations = generate_fonts_combinations(weeks.length)
 
   // convert the data into objects assigned by week
-  const nuggets_per_week = weeks.map((week, week_index) => ({
+  const nuggets_per_week = weeks.reverse().map((week, week_index) => ({
     ...week,
     // dispatch & format as an object all the nuggets in their correponding week
     // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
