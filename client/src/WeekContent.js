@@ -5,7 +5,7 @@ import { Navigation } from './Navigation'
 import { NewWeekButton } from './NewWeekButton'
 import { DeleteWeekButton } from './DeleteWeekButton'
 import { WeekDates } from './WeekDates'
-import { WeekWork } from './WeekWork'
+import { NuggetImage } from './NuggetImage'
 import { WeekNuggets } from './WeekNuggets'
 
 export const WeekContent = (props) => {
@@ -25,9 +25,8 @@ export const WeekContent = (props) => {
 
     const handle_keydown = (event) => {
       if (is_editing) return
-      const { key } = event
 
-      switch (key) {
+      switch (event.key) {
         // change week with keyboard's left & right arrows
         case 'ArrowLeft': {
           const { prev_index } = update_indexes(selected_week_index, weeks_data)
@@ -87,7 +86,7 @@ export const WeekContent = (props) => {
         nuggets_sheet_columns={nuggets_sheet_columns}
       />
       <RightPanel>
-        <WeekWork week={selected_week} selected_nugget={selected_nugget} />
+        <NuggetImage week={selected_week} selected_nugget={selected_nugget} />
         <Navigation
           week={selected_week}
           weeks_data={weeks_data}

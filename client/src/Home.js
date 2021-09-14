@@ -37,6 +37,7 @@ const Home = () => {
   }, [gapi_loaded])
 
   // fetch the spreadsheet's data
+  // to do: cache the data (avoid error 429: too many requests)
   useEffect(() => {
     if (!gapi_loaded) return
     const fetch_spreadsheet_data = async () => {

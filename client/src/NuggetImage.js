@@ -1,6 +1,6 @@
 import { Component } from './flags'
 
-export const WeekWork = ({ week, selected_nugget_type }) => {
+export const NuggetImage = ({ week, selected_nugget_type }) => {
   const { background, color } = week.color_harmonies.work
   const image = week.nuggets[selected_nugget_type]?.image
   const image_url = `./images/${image}`
@@ -12,7 +12,12 @@ export const WeekWork = ({ week, selected_nugget_type }) => {
         color,
       }}
     >
-      {!image && 'What I worked on this week'}
+      {!image && (
+        <input
+          onChange={(event) => console.log(event.target.files[0])}
+          type="file"
+        />
+      )}
     </Wrapper>
   )
 }
