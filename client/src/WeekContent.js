@@ -113,7 +113,6 @@ export const WeekContent = (props) => {
   )
 }
 
-const Buttons =
-  Component.absolute.b150.w100p.flex.flex_column.ai_flex_end.jc_flex_end.pr30.div()
+const Buttons = Component.absolute.b150.r30.flex.flex_column.div()
 const Wrapper = Component.h100vh.w100p.flex.jc_between.div()
 const RightPanel = Component.w40p.flex.relative.flex_column.jc_between.div()

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Component } from './flags'
 import { dashcase, log_error } from './toolbox'
 
@@ -50,7 +50,9 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   }
 
   return (
-    <Wrapper
+    <Form
+      elemRef={set_form}
+      key={`form-upload-${Date.now()}`}
       style={{
         color,
         background: image_extension
@@ -58,13 +60,34 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
           : background,
       }}
     >
-      {nugget && !image_extension && (
-        <form ref={set_form}>
-          <input type="file" name="uploaded_image" onChange={upload_image} />
-        </form>
+      {nugget && (
+        <Fragment>
+          <Label className="hover_blend_mode_difference">
+            <Input type="file" name="uploaded_image" onChange={upload_image} />
+            <UploadIcon color={color} />
+            <Span>Upload a pic</Span>
+          </Label>
+        </Fragment>
       )}
-    </Wrapper>
+    </Form>
   )
 }
 
-const Wrapper = Component.flex1.pt50.pb80.ph40.div()
+const UploadIcon = ({ color }) => {
+  return (
+    <svg width="90px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130">
+      <path
+        fill="none"
+        stroke={color}
+        strokeWidth={3.4}
+        d="M33.5 48.5 65 17l31.5 31.5M65 93.5V17.5M18 115h94"
+      />
+    </svg>
+  )
+}
+
+const Form = Component.relative.h100p.w100p.flex1.form()
+const Input = Component.absolute.c_pointer.o0.w100p.h100p.input()
+const Label =
+  Component.block.fs30.text_center.h100p.w100p.flex.flex_column.ai_center.jc_center.label()
+const Span = Component.mt30.span()

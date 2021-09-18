@@ -96,3 +96,7 @@ button {
 .gradient.to-bottom {
   background: linear-gradient(to bottom, transparent, white);
 }
+
+.hover_blend_mode_difference:hover {
+  mix-blend-mode: difference;
+}
