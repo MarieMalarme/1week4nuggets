@@ -86,7 +86,11 @@ export const WeekContent = (props) => {
         nuggets_sheet_columns={nuggets_sheet_columns}
       />
       <RightPanel>
-        <NuggetImage week={selected_week} selected_nugget={selected_nugget} />
+        <NuggetImage
+          week={selected_week}
+          selected_nugget_type={selected_nugget}
+          set_last_update={set_last_update}
+        />
         <Navigation
           week={selected_week}
           weeks_data={weeks_data}

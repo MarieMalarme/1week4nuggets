@@ -4,6 +4,13 @@
 // example 3: int_to_letter(5) → 'F'
 export const int_to_letter = (int) => String.fromCharCode(65 + int)
 
+export const dashcase = (string) =>
+  string
+    .toLowerCase()
+    .replace(/[^-a-z0-9 ]/g, '')
+    .split(' ')
+    .join('-')
+
 export const random = (min, max) => {
   min = Math.ceil(min)
   max = Math.floor(max)
