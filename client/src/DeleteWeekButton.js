@@ -1,5 +1,5 @@
 import { Component } from './flags'
-import { log_error } from './toolbox'
+import { log } from './log'
 
 export const DeleteWeekButton = ({ selected_week, set_last_update }) => {
   const delete_week_from_spreadsheet = async () => {
@@ -55,7 +55,7 @@ export const DeleteWeekButton = ({ selected_week, set_last_update }) => {
         'color: cyan',
       )
     } catch (error) {
-      log_error(error, `deleting week ${selected_week.id}`)
+      log.error(error, `deleting week ${selected_week.id}`)
 
       // store the update error to be displayed in the update banner
       const { code } = error?.result?.error || error

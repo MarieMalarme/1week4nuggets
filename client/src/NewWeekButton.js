@@ -1,5 +1,5 @@
 import { Component } from './flags'
-import { log_error } from './toolbox'
+import { log } from './log'
 
 export const NewWeekButton = ({ weeks_data, set_last_update, ...props }) => {
   const { nuggets_sheet_columns } = props
@@ -73,7 +73,7 @@ export const NewWeekButton = ({ weeks_data, set_last_update, ...props }) => {
         'color: cyan',
       )
     } catch (error) {
-      log_error(error, 'adding a new week')
+      log.error(error, 'adding a new week')
 
       // store the update error to be displayed in the update banner
       const { code } = error?.result?.error || error

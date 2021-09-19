@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useLayoutEffect } from 'react'
 import { Component, Div } from './flags'
-import { log_error } from './toolbox'
+import { log } from './log'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { states, ...style } = props
@@ -75,7 +75,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
         'color: lightgrey',
       )
     } catch (error) {
-      log_error(error, 'updating the spreadsheet')
+      log.error(error, 'updating the spreadsheet')
 
       // store the update error to be displayed in the update banner
       const { code } = error?.result?.error || error

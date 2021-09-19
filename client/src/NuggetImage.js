@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Component } from './flags'
-import { dashcase, log_error } from './toolbox'
+import { dashcase } from './toolbox'
+import { log } from './log'
 
 export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const [form, set_form] = useState(null)
@@ -36,7 +37,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
         event: `Uploaded ${nugget.name} pic!`,
       })
     } catch (error) {
-      log_error(error, `uploading ${nugget.name} pic!`)
+      log.error(error, `uploading ${nugget.name} pic!`)
 
       // store the update error to be displayed in the update banner
       set_last_update({

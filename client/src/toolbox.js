@@ -17,12 +17,6 @@ export const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export const log_error = (error, event) => {
-  const { message, code } = error.result?.error || error
-  console.log(`%cOopsie, ${code} error occurred while ${event}!`, 'color: red')
-  console.log(`%c✕ ${message}`, 'color: orange')
-}
-
 // create a 2-color harmony for page sections:
 // one for the background & one for the text;
 // a `darker` option can be passed to get a darker background

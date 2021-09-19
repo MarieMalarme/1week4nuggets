@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { log_error, get_color_harmony, int_to_letter, random } from './toolbox'
+import { get_color_harmony, int_to_letter, random } from './toolbox'
+import { log } from './log'
 import { Component } from './flags'
 import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
@@ -19,7 +20,7 @@ const Home = () => {
         await window.gapi.client.init(gapi_request_params)
         set_gapi_loaded(true)
       } catch (error) {
-        log_error(error, 'loading google API')
+        log.error(error, 'loading google API')
       }
     })
   }, [])
@@ -32,7 +33,7 @@ const Home = () => {
       isSignedIn.listen(set_is_signed_in) // listen for auth state changes
       set_is_signed_in(isSignedIn.get()) // set the initial auth state
     } catch (error) {
-      log_error(error, 'handling google authentication')
+      log.error(error, 'handling google authentication')
     }
   }, [gapi_loaded])
 
@@ -54,7 +55,7 @@ const Home = () => {
         set_weeks_data(formatted_data.nuggets_per_week)
         set_nuggets_sheet_columns(formatted_data.nuggets_sheet_columns)
       } catch (error) {
-        log_error(error, 'querying the spreadsheet')
+        log.error(error, 'querying the spreadsheet')
       }
     }
     fetch_spreadsheet_data()
