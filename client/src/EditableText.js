@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useLayoutEffect } from 'react'
+import { update_nugget_cell } from './data'
 import { Component, Div } from './flags'
-import { log } from './log'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { states, ...style } = props
@@ -42,53 +42,6 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
   // so the user without writing access can't see the placeholder with instructions to edit
   if (!is_signed_in && !initial_value) return null
 
-  // to do: also update spreadsheet after editing stops
-  const update_spreadsheet = async (new_value) => {
-    const cell = `${nuggets_sheet_columns[column]}${row}`
-    const request = {
-      spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
-      includeValuesInResponse: true,
-      valueInputOption: 'USER_ENTERED',
-      range: `'Nuggets'!${cell}`,
-      values: [[new_value]],
-      majorDimension: 'ROWS',
-    }
-
-    try {
-      console.log(`%c----------------------------------`, 'color: grey')
-      console.log(`%c${new Date().toString().split('GMT')[0]}`, 'color: grey')
-      console.log(`%cWriting to google spreadsheet...`, 'color: dodgerblue')
-
-      const { values } = window.gapi.client.sheets.spreadsheets
-      const response = await values.update(request)
-
-      // store the last update & re-trigger the data fetching
-      set_last_update({ date: new Date(), event: `Updated column ${column}` })
-
-      // display the success in console
-      const updated_values = response.result.updatedData.values
-      const updated_value = updated_values && updated_values[0]
-      console.log(`%cColumn ${column} successfully updated!`, 'color: cyan')
-      console.log(
-        `%cValue sent to cell ${cell}: %c${updated_value || 'empty string'}`,
-        'color: grey',
-        'color: lightgrey',
-      )
-    } catch (error) {
-      log.error(error, 'updating the spreadsheet')
-
-      // store the update error to be displayed in the update banner
-      const { code } = error?.result?.error || error
-      set_last_update({
-        date: new Date(),
-        event:
-          code === 401 // indicate if the error is unauthorized user
-            ? 'You need to be signed in as an authorized user to update the data'
-            : `Failed to update column ${column}`,
-      })
-    }
-  }
-
   // get the styled input component corresponding to the type of item
   const Input = inputs_components[column]
 
@@ -114,8 +67,19 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
           onInput={() => set_text(textarea_ref.innerText)}
           onFocus={() => set_is_editing(column)} // enter edit mode when focusing the textarea
           onBlur={() => {
+            // to do: also update spreadsheet after editing stops
+
             // update the spreadsheet if the input value has changed
-            if (text !== initial_value) update_spreadsheet(text)
+            if (text !== initial_value) {
+              update_nugget_cell({
+                new_value: text,
+                nuggets_sheet_columns,
+                set_last_update,
+                column,
+                row,
+              })
+            }
+
             // exit edit mode when clicking outside the input
             set_is_editing(false)
           }}
