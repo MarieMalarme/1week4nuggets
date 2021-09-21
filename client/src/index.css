@@ -100,3 +100,17 @@ button {
 .hover_blend_mode_difference:hover {
   mix-blend-mode: difference;
 }
+
+.image-loading {
+  animation: 1s fade-in;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

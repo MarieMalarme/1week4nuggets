@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Component } from './flags'
 import { dashcase } from './toolbox'
 import { update_nugget_cell } from './data'
@@ -7,6 +7,7 @@ import { log } from './log'
 export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const [form, set_form] = useState(null)
   const [form_key, set_form_key] = useState(`form-upload-${Date.now()}`)
+  const [uploading_image, set_uploading_image] = useState(false)
 
   const { set_last_update, nuggets_sheet_columns } = props
   const { background, color } = week.color_harmonies.work
@@ -23,14 +24,17 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
       key={form_key}
       style={{
         color,
-        background: image_extension
-          ? `center / cover url(${image_url})`
-          : background,
+        background:
+          !uploading_image && image_extension
+            ? `center / cover url(${image_url})`
+            : background,
       }}
     >
       {nugget && (
         <UploadInput
           nuggets_sheet_columns={nuggets_sheet_columns}
+          set_uploading_image={set_uploading_image}
+          uploading_image={uploading_image}
           set_last_update={set_last_update}
           set_form_key={set_form_key}
           nugget_name={nugget.name}
@@ -44,7 +48,8 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
 }
 
 const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
-  const { nuggets_sheet_columns, set_last_update, set_form_key } = props
+  const { set_uploading_image, set_last_update, set_form_key } = props
+  const { uploading_image, nuggets_sheet_columns } = props
 
   const upload_image = async (event) => {
     // format & send data from the form - image and nugget name - to the server
@@ -59,6 +64,8 @@ const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
     )
 
     try {
+      set_uploading_image(true)
+
       log.write('Uploading image to server')
 
       // fetch post route to upload the image to the server
@@ -73,6 +80,7 @@ const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
         'color: cyan',
       )
 
+      // to do: only update when the new extension is different from the previous one
       // update nugget image extension value in spreadsheet
       await update_nugget_cell({
         new_value: image_file_extension,
@@ -81,17 +89,17 @@ const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
         row,
       })
 
-      form.reset() // clear the form input
-
       // store the last update & re-trigger the data fetching
       set_last_update({
         date: new Date(),
         event: `Uploaded ${nugget_name} pic!`,
       })
 
-      // change the form key to refetch the image route
+      // reset the form & change the form key to refetch the image route
       // - if not, react does not re-render the form since the image path is still the same
+      form.reset()
       set_form_key(`form-upload-${Date.now()}`)
+      set_uploading_image(false)
     } catch (error) {
       log.error(error, `uploading ${nugget_name} pic!`)
 
@@ -103,14 +111,21 @@ const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
             ? 'You need to be signed in as an authorized user to update the data'
             : `Failed to upload ${nugget_name} pic!`,
       })
+      set_uploading_image(false)
     }
   }
 
   return (
     <Label className="hover_blend_mode_difference">
-      <Input type="file" name="uploaded_image" onChange={upload_image} />
-      <UploadIcon color={color} />
-      <Span>Upload a pic</Span>
+      {uploading_image ? (
+        <Loader className="image-loading">Uploading image</Loader>
+      ) : (
+        <Fragment>
+          <Input type="file" name="uploaded_image" onChange={upload_image} />
+          <UploadIcon color={color} />
+          <Span>Upload a pic</Span>
+        </Fragment>
+      )}
     </Label>
   )
 }
@@ -133,3 +148,4 @@ const Input = Component.absolute.c_pointer.o0.w100p.h100p.input()
 const Label =
   Component.block.fs30.text_center.h100p.w100p.flex.flex_column.ai_center.jc_center.label()
 const Span = Component.mt30.span()
+const Loader = Component.div()
