@@ -31,18 +31,22 @@ export const update_nugget_cell = async ({ new_value, ...props }) => {
       })
     }
   } catch (error) {
+    const { code } = error?.result?.error || error
+    const message =
+      code === 401 // indicate if the error is unauthorized user
+        ? 'You need to be signed in as an authorized user to update the data'
+        : `Failed to update column ${column}`
+
     log.error(error, 'updating the spreadsheet')
 
     if (set_last_update) {
       // store the update error to be displayed in the update banner
-      const { code } = error?.result?.error || error
       set_last_update({
         date: new Date(),
-        event:
-          code === 401 // indicate if the error is unauthorized user
-            ? 'You need to be signed in as an authorized user to update the data'
-            : `Failed to update column ${column}`,
+        event: message,
       })
+    } else {
+      throw new Error(message)
     }
   }
 }
