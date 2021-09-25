@@ -4,6 +4,9 @@
 // example 3: int_to_letter(5) → 'F'
 export const int_to_letter = (int) => String.fromCharCode(65 + int)
 
+export const format_date = (date) =>
+  new Date(date).toLocaleString().slice(0, 10).split('/').join(' ')
+
 export const dashcase = (string) =>
   string
     .toLowerCase()

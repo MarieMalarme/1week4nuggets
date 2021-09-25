@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { get_color_harmony, int_to_letter, random } from './toolbox'
+import { get_color_harmony, random } from './toolbox'
+import { int_to_letter, format_date } from './toolbox'
 import { log } from './log'
 import { Component } from './flags'
 import { WeekContent } from './WeekContent'
@@ -47,7 +48,7 @@ const Home = () => {
         const { client } = window.gapi
         const response = await client.sheets.spreadsheets.values.batchGet({
           spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
-          ranges: ['Weeks', 'Nuggets'],
+          ranges: ['Nuggets'],
         })
 
         // format the fetched data and set it to the state
@@ -81,69 +82,60 @@ const Home = () => {
   )
 }
 
+// extract data from the queried range and format it into arrays of objects
 const format_spreadsheet_data = (response) => {
   // return an empty array if no values are found in the specified range
   if (!response?.result?.valueRanges?.some((range) => range.values)) return []
-  // extract data from the 2 queried ranges and format into arrays of objects
-  const [weeks, nuggets] = response.result.valueRanges.map((range) => {
-    // extract for each range the first row as an array containing column names:
-    // example → ['type', 'name', 'date']
-    // extract the other rows as an array of arrays containing data:
-    // example → [['event', 'The mouse conference', 'May 2019'], ['book', 'Torrent', 'June 2021']]
-    const [column_names, ...rows] = range.values
 
-    // convert the rows' arrays into objects
-    return rows.map((columns) => {
-      const column_entries = columns.map((value, index) =>
-        // generate a 2-value array for each column
-        // containing the column name and the column value
-        // example 1 → ['name', 'The Mouse conference']
-        // example 2 → ['subtype', 'talk']
-        [column_names[index], value],
-      )
-      // create an object with key-value pairs from the 2-value arrays
-      // from → [['name', 'The Mouse conference'], ['subtype', 'talk']]
-      // into → { name: 'The Mouse conference', subtype: 'talk' }
-      return Object.fromEntries(column_entries)
-    })
+  // extract the first row of the range as an array containing column names:
+  // example → ['type', 'name', 'date']
+  // extract the other rows as an array of arrays containing data:
+  // example → [['event', 'The mouse conference', 'May 2019'], ['book', 'Torrent', 'June 2021']]
+  const [column_names, ...rows] = response.result.valueRanges[0].values
+
+  // convert the rows' arrays into objects
+  const nuggets = rows.map((columns, row_index) => {
+    // generate a 2-value array for each column containing the column name and the column value
+    // example 1 → ['name', 'The Mouse conference']
+    // example 2 → ['subtype', 'talk']
+    const column_entries = columns.map((value, i) => [column_names[i], value])
+
+    // create an object with key-value pairs from the 2-value arrays
+    // from → [['name', 'The Mouse conference'], ['subtype', 'talk']]
+    // into → { name: 'The Mouse conference', subtype: 'talk' }
+    return { ...Object.fromEntries(column_entries), row: row_index + 2 }
   })
-
-  const color_harmonies = generate_color_harmonies(weeks.length)
-  const fonts_combinations = generate_fonts_combinations(weeks.length)
 
   // convert the data into objects assigned by week
   const nuggets_per_week = weeks
-    .map((week, week_index) => ({
-      ...week,
+    .map((week, week_index) => {
       // dispatch & format as an object all the nuggets in their correponding week
       // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
-      row: week_index + 2,
-      nuggets: Object.fromEntries(
-        nuggets
-          .map((nugget, index) => ({
-            row: index + 2,
-            ...nugget,
-          }))
-          .filter((nugget) => nugget.week_id === week.id)
-          .map((nugget) => {
-            // extract & ignore 'week_id' property since each nugget
-            // is now contained in the correponding week
-            const { week_id, type, subtype, ...nugget_content } = nugget
-            // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
-            // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
-            return [type || subtype, { ...nugget_content, subtype }]
-          }),
-      ),
-      // assign color harmonies & fonts combinations for each week object
-      color_harmonies: color_harmonies[week_index],
-      fonts: fonts_combinations[week_index],
-    }))
+      const nuggets_entries = nuggets
+        .filter((nugget) => Number(nugget.week_id) === week.id)
+        .map((nugget) => {
+          // extract & ignore 'week_id' property since each nugget is contained in the correponding week
+          const { week_id, type, subtype, ...content } = nugget
+          // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
+          // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
+          return [type || subtype, { ...content, subtype }]
+        })
+
+      return {
+        ...week,
+        nuggets: Object.fromEntries(nuggets_entries),
+        // assign color harmonies & fonts combinations for each week object
+        color_harmonies: color_harmonies[week_index],
+        fonts: fonts_combinations[week_index],
+      }
+    })
     .reverse()
 
-  const nuggets_column_names = response.result.valueRanges[1].values[0]
   const nuggets_sheet_columns = Object.fromEntries(
-    nuggets_column_names.map((name, index) => [name, int_to_letter(index)]),
+    column_names.map((name, index) => [name, int_to_letter(index)]),
   )
+
+  console.log(nuggets_per_week)
 
   return { nuggets_per_week, nuggets_sheet_columns }
 }
@@ -156,37 +148,55 @@ const gapi_request_params = {
   scope: 'https://www.googleapis.com/auth/spreadsheets',
 }
 
-// generate a random color harmony (one per section)
-const generate_color_harmonies = (amount) =>
-  [...Array(amount).keys()].map(() => ({
-    dates: get_color_harmony(),
-    work: get_color_harmony({ darker: true }),
-    navigation: get_color_harmony(),
-  }))
+const SECOND = 1000
+const MINUTE = SECOND * 60
+const HOUR = MINUTE * 60
+const DAY = HOUR * 24
+const WEEK = DAY * 7
+
+const first_day = new Date('2021-09-13')
+const today = new Date()
+first_day.setHours(0, 0, 0)
+today.setHours(0, 0, 0)
+
+// calculate the amount of weeks that has passed since the beginning of the report
+const weeks_amount = Math.ceil((today - first_day) / WEEK)
+
+const weeks = [...Array(weeks_amount).keys()].map((index) => {
+  const first_week_day = first_day.getTime() + index * WEEK
+  const last_week_day = first_week_day + 7 * DAY - SECOND
+  const dates = `${format_date(first_week_day)}\n${format_date(last_week_day)}`
+  return { id: index + 1, dates }
+})
+
+const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
+  dates: get_color_harmony(),
+  work: get_color_harmony({ darker: true }),
+  navigation: get_color_harmony(),
+}))
 
 // create a combination of 4 fonts (one per nugget type)
 // picked randomly among the different available fonts
-const generate_fonts_combinations = (amount) =>
-  [...Array(amount).keys()].map(() => {
-    const fonts_list = [
-      { name: 'basier', size: 53, line_height: 69 },
-      { name: 'bogam', size: 65, line_height: 62 },
-      { name: 'chaney', size: 40, line_height: 54 },
-      { name: 'frac', size: 50, line_height: 65 },
-      { name: 'migra', size: 53, line_height: 63 },
-      { name: 'pluto', size: 53, line_height: 70 },
-      { name: 'trash', size: 53, line_height: 57 },
-    ]
+const fonts_combinations = [...Array(weeks_amount).keys()].map(() => {
+  const fonts_list = [
+    { name: 'basier', size: 53, line_height: 69 },
+    { name: 'bogam', size: 65, line_height: 62 },
+    { name: 'chaney', size: 40, line_height: 54 },
+    { name: 'frac', size: 50, line_height: 65 },
+    { name: 'migra', size: 53, line_height: 63 },
+    { name: 'pluto', size: 53, line_height: 70 },
+    { name: 'trash', size: 53, line_height: 57 },
+  ]
 
-    const random_fonts = [...Array(4).keys()].map((index) => {
-      const random_index = random(0, fonts_list.length - 1)
-      const font = fonts_list[random_index]
-      fonts_list.splice(random_index, 1)
-      return font
-    })
-
-    return random_fonts
+  const random_fonts = [...Array(4).keys()].map((index) => {
+    const random_index = random(0, fonts_list.length - 1)
+    const font = fonts_list[random_index]
+    fonts_list.splice(random_index, 1)
+    return font
   })
+
+  return random_fonts
+})
 
 const Page = Component.fixed.fw200.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
