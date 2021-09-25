@@ -4,11 +4,9 @@ import { update_indexes } from './toolbox'
 import { Nugget } from './Nugget'
 
 export const WeekNuggets = ({ week, weeks_data, ...props }) => {
+  const nuggets = nuggets_types.map((type) => [type, week.nuggets[type] || {}])
   const [hovered_nugget, set_hovered_nugget] = useState(null)
   const [is_editing, set_is_editing] = useState(false)
-
-  const nuggets = Object.entries(week.nuggets)
-  const nuggets_types = Object.keys(week.nuggets) // list of all types of nuggets in a week
 
   // set keyboard events' listeners
   const handle_keydown = (event) => {
@@ -72,6 +70,7 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
           index={index}
           nuggets={nuggets}
           content={content}
+          week_id={week.id}
           font={week.fonts[index]}
           hovered_nugget={hovered_nugget}
           set_hovered_nugget={set_hovered_nugget}
@@ -84,4 +83,5 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
   )
 }
 
+const nuggets_types = ['event', 'project', 'book', 'quote'] // list of all types of nuggets in a week
 const Nuggets = Component.w55p.flex.flex_column.div()

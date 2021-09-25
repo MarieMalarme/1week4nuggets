@@ -7,7 +7,7 @@ import { WeekNuggets } from './WeekNuggets'
 
 export const WeekContent = (props) => {
   const { weeks_data, set_last_update, is_signed_in } = props
-  const { nuggets_sheet_columns } = props
+  const { nuggets_sheet_coords } = props
 
   const [selected_nugget, set_selected_nugget] = useState(null)
   const [selected_week_index, set_selected_week_index] = useState(0)
@@ -25,12 +25,12 @@ export const WeekContent = (props) => {
         selected_week_index={selected_week_index}
         set_selected_week_index={set_selected_week_index}
         set_last_update={set_last_update}
-        nuggets_sheet_columns={nuggets_sheet_columns}
+        nuggets_sheet_coords={nuggets_sheet_coords}
       />
       <RightPanel>
         <NuggetImage
           week={selected_week}
-          nuggets_sheet_columns={nuggets_sheet_columns}
+          nuggets_sheet_coords={nuggets_sheet_coords}
           selected_nugget_type={selected_nugget}
           set_last_update={set_last_update}
         />

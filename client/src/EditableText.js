@@ -4,8 +4,9 @@ import { Component, Div } from './flags'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { states, ...style } = props
-  const { is_selected, is_signed_in, nuggets_sheet_columns } = states.variables
-  const { set_is_editing, set_last_update } = states.functions
+  const { week_id, type, variables, functions } = states
+  const { is_selected, is_signed_in, nuggets_sheet_coords } = variables
+  const { set_is_editing, set_last_update } = functions
 
   const [wrapper_ref, set_wrapper_ref] = useState(null)
   const [textarea_ref, set_textarea_ref] = useState(null)
@@ -26,8 +27,8 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
   // when the data is fetched or updated from the spreadsheet
   useEffect(() => {
     if (!textarea_ref) return
-    textarea_ref.innerText = initial_value
-    set_text(initial_value)
+    textarea_ref.innerText = initial_value || ''
+    set_text(initial_value || '')
   }, [textarea_ref, initial_value, row])
 
   // check if the "description" input has scrollable content
@@ -72,8 +73,10 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
             // update the spreadsheet if the input value has changed
             if (text !== initial_value) {
               update_nugget_cell({
+                type,
+                week_id,
                 new_value: text,
-                nuggets_sheet_columns,
+                nuggets_sheet_coords,
                 set_last_update,
                 column,
                 row,

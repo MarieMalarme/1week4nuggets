@@ -1,16 +1,34 @@
 import { log } from './log'
 
-export const update_nugget_cell = async ({ new_value, ...props }) => {
-  const { column, row, set_last_update, nuggets_sheet_columns } = props
-  const cell = `${nuggets_sheet_columns[column]}${row}`
+export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
+  const { column, row, type, set_last_update, nuggets_sheet_coords } = props
+  const cell_row = row || nuggets_sheet_coords.last_row
+  const cell = `${nuggets_sheet_coords.columns[column]}${cell_row}`
 
   const request = {
     spreadsheetId: process.env.REACT_APP_SPREADSHEET_ID,
-    includeValuesInResponse: true,
     valueInputOption: 'USER_ENTERED',
-    range: `'Nuggets'!${cell}`,
-    values: [[new_value]],
-    majorDimension: 'ROWS',
+    includeValuesInResponse: true,
+    data: [
+      {
+        // update the edited value
+        range: `'Nuggets'!${cell}`,
+        values: [[new_value]],
+        majorDimension: 'ROWS',
+      },
+      {
+        // add the week id
+        range: `'Nuggets'!${nuggets_sheet_coords.columns['week_id']}${cell_row}`,
+        values: [[week_id]],
+        majorDimension: 'ROWS',
+      },
+      {
+        // add the type
+        range: `'Nuggets'!${nuggets_sheet_coords.columns['type']}${cell_row}`,
+        values: [[type]],
+        majorDimension: 'ROWS',
+      },
+    ],
   }
 
   try {
@@ -18,7 +36,7 @@ export const update_nugget_cell = async ({ new_value, ...props }) => {
 
     // send request to google api to update spreadsheet
     const { values } = window.gapi.client.sheets.spreadsheets
-    const response = await values.update(request)
+    const response = await values.batchUpdate(request)
 
     // display the success in console
     log.success(response, column, cell)

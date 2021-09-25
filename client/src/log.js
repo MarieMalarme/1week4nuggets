@@ -11,7 +11,7 @@ const error = (error, event) => {
 }
 
 const success = (response, column, cell) => {
-  const updated_values = response.result.updatedData.values
+  const updated_values = response.result.responses[0].updatedData.values
   const updated_value = updated_values && updated_values[0]
   console.log(`%cColumn ${column} successfully updated!`, 'color: cyan')
   console.log(

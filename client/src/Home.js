@@ -9,7 +9,7 @@ import { UpdateBanner } from './UpdateBanner'
 
 const Home = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
-  const [nuggets_sheet_columns, set_nuggets_sheet_columns] = useState([])
+  const [nuggets_sheet_coords, set_nuggets_sheet_coords] = useState([])
   const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
   const [last_update, set_last_update] = useState(false)
@@ -54,7 +54,7 @@ const Home = () => {
         // format the fetched data and set it to the state
         const formatted_data = format_spreadsheet_data(response)
         set_weeks_data(formatted_data.nuggets_per_week)
-        set_nuggets_sheet_columns(formatted_data.nuggets_sheet_columns)
+        set_nuggets_sheet_coords(formatted_data.nuggets_sheet_coords)
       } catch (error) {
         log.error(error, 'querying the spreadsheet')
       }
@@ -74,7 +74,7 @@ const Home = () => {
       <UpdateBanner last_update={last_update} />
       <WeekContent
         weeks_data={weeks_data}
-        nuggets_sheet_columns={nuggets_sheet_columns}
+        nuggets_sheet_coords={nuggets_sheet_coords}
         is_signed_in={is_signed_in}
         set_last_update={set_last_update}
       />
@@ -135,9 +135,13 @@ const format_spreadsheet_data = (response) => {
     column_names.map((name, index) => [name, int_to_letter(index)]),
   )
 
-  console.log(nuggets_per_week)
-
-  return { nuggets_per_week, nuggets_sheet_columns }
+  return {
+    nuggets_per_week,
+    nuggets_sheet_coords: {
+      columns: nuggets_sheet_columns,
+      last_row: rows.length + 2,
+    },
+  }
 }
 
 // params to send when initialiazing gapi client to access spreadsheets' content

@@ -9,7 +9,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const [form_key, set_form_key] = useState(`form-upload-${Date.now()}`)
   const [uploading_image, set_uploading_image] = useState(false)
 
-  const { set_last_update, nuggets_sheet_columns } = props
+  const { set_last_update, nuggets_sheet_coords } = props
   const { background, color } = week.color_harmonies.work
 
   const nugget = week.nuggets[selected_nugget_type]
@@ -32,12 +32,14 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
     >
       {nugget && (
         <UploadInput
-          nuggets_sheet_columns={nuggets_sheet_columns}
+          nuggets_sheet_coords={nuggets_sheet_coords}
           set_uploading_image={set_uploading_image}
           uploading_image={uploading_image}
           set_last_update={set_last_update}
           set_form_key={set_form_key}
+          type={selected_nugget_type}
           nugget_name={nugget.name}
+          week_id={week.id}
           row={nugget.row}
           color={color}
           form={form}
@@ -47,9 +49,9 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   )
 }
 
-const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
+const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
   const { set_uploading_image, set_last_update, set_form_key } = props
-  const { uploading_image, nuggets_sheet_columns } = props
+  const { uploading_image, nuggets_sheet_coords, week_id } = props
 
   const upload_image = async (event) => {
     // format & send data from the form - image and nugget name - to the server
@@ -83,9 +85,11 @@ const UploadInput = ({ row, nugget_name, form, color, ...props }) => {
       // to do: only update when the new extension is different from the previous one
       // update nugget image extension value in spreadsheet
       await update_nugget_cell({
+        type,
+        week_id,
         new_value: image_file_extension,
         column: 'image_extension',
-        nuggets_sheet_columns,
+        nuggets_sheet_coords,
         row,
       })
 
