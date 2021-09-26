@@ -5,7 +5,7 @@ import { log } from './log'
 
 export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const [form, set_form] = useState(null)
-  const [form_key, set_form_key] = useState(`form-upload-${Date.now()}`)
+  const [image_hash, set_image_hash] = useState(Date.now())
   const [uploading_image, set_uploading_image] = useState(false)
 
   const { set_last_update, nuggets_sheet_coords } = props
@@ -20,12 +20,11 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   return (
     <Form
       elemRef={set_form}
-      key={form_key}
       style={{
         color,
         background:
           !uploading_image && image_extension
-            ? `center / cover url(${image_url})`
+            ? `center / cover url(${image_url}?${image_hash})`
             : background,
       }}
     >
@@ -35,7 +34,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
           set_uploading_image={set_uploading_image}
           uploading_image={uploading_image}
           set_last_update={set_last_update}
-          set_form_key={set_form_key}
+          set_image_hash={set_image_hash}
           type={selected_nugget_type}
           nugget={nugget}
           week_id={week.id}
@@ -48,7 +47,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
 }
 
 const UploadInput = ({ nugget, type, form, color, ...props }) => {
-  const { set_uploading_image, set_last_update, set_form_key } = props
+  const { set_uploading_image, set_last_update, set_image_hash } = props
   const { uploading_image, nuggets_sheet_coords, week_id } = props
 
   const upload_image = async (event) => {
@@ -100,7 +99,7 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
       // reset the form & change the form key to refetch the image route
       // - if not, react does not re-render the form since the image path is still the same
       form.reset()
-      set_form_key(`form-upload-${Date.now()}`)
+      set_image_hash(Date.now())
       set_uploading_image(false)
     } catch (error) {
       log.error(error, `uploading ${nugget.name} pic!`)
