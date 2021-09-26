@@ -77,6 +77,10 @@ button {
   caret-color: deeppink;
 }
 
+*[contenteditable]:focus {
+  text-transform: none;
+}
+
 ::selection {
   background: aquamarine;
   color: deeppink;
