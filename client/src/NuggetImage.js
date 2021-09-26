@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react'
 import { Component } from './flags'
-import { dashcase } from './toolbox'
 import { update_nugget_cell } from './data'
 import { log } from './log'
 
@@ -16,7 +15,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const image_extension = nugget?.image_extension
   const image_url =
     nugget &&
-    `http://localhost:5000/images/${dashcase(nugget.name)}.${image_extension}`
+    `http://localhost:5000/images/week${week.id}_${selected_nugget_type}.${image_extension}`
 
   return (
     <Form
@@ -38,9 +37,8 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
           set_last_update={set_last_update}
           set_form_key={set_form_key}
           type={selected_nugget_type}
-          nugget_name={nugget.name}
+          nugget={nugget}
           week_id={week.id}
-          row={nugget.row}
           color={color}
           form={form}
         />
@@ -49,7 +47,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   )
 }
 
-const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
+const UploadInput = ({ nugget, type, form, color, ...props }) => {
   const { set_uploading_image, set_last_update, set_form_key } = props
   const { uploading_image, nuggets_sheet_coords, week_id } = props
 
@@ -58,7 +56,7 @@ const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
     const form_data = new FormData()
     const image_file = event.target.files[0]
     form_data.append('uploaded_image', image_file)
-    form_data.append('nugget_name', dashcase(nugget_name))
+    form_data.append('file_name', `week${week_id}_${type}`)
 
     const image_file_extension = image_file.name.slice(
       image_file.name.lastIndexOf('.') + 1,
@@ -90,13 +88,13 @@ const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
         new_value: image_file_extension,
         column: 'image_extension',
         nuggets_sheet_coords,
-        row,
+        row: nugget.row,
       })
 
       // store the last update & re-trigger the data fetching
       set_last_update({
         date: new Date(),
-        event: `Uploaded ${nugget_name} pic!`,
+        event: `Uploaded ${nugget.name} pic!`,
       })
 
       // reset the form & change the form key to refetch the image route
@@ -105,7 +103,7 @@ const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
       set_form_key(`form-upload-${Date.now()}`)
       set_uploading_image(false)
     } catch (error) {
-      log.error(error, `uploading ${nugget_name} pic!`)
+      log.error(error, `uploading ${nugget.name} pic!`)
 
       // store the update error to be displayed in the update banner
       set_last_update({
@@ -113,7 +111,7 @@ const UploadInput = ({ row, type, nugget_name, form, color, ...props }) => {
         event:
           error.code === 401 // indicate if the error is unauthorized user
             ? 'You need to be signed in as an authorized user to update the data'
-            : `Failed to upload ${nugget_name} pic!`,
+            : `Failed to upload ${nugget.name} pic!`,
       })
       set_uploading_image(false)
     }

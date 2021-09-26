@@ -29,7 +29,7 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
   const accepted_extensions = ['.png', '.jpg', '.jpeg']
 
   if (accepted_extensions.includes(file_extension)) {
-    const file_name = `${req.body.nugget_name}${file_extension}`
+    const file_name = `${req.body.file_name}${file_extension}`
     const target_path = `${images_folder_path}/${file_name}`
 
     // to do: check if an image already exists for the same nugget;
