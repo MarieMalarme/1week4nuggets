@@ -26,8 +26,9 @@ const upload = multer({ dest: images_folder_path })
 app.post('/upload', upload.single('uploaded_image'), (req, res) => {
   const temp_path = req.file.path
   const file_extension = path.extname(req.file.originalname).toLowerCase()
+  const accepted_extensions = ['.png', '.jpg', '.jpeg']
 
-  if (file_extension === '.png' || file_extension === '.jpg') {
+  if (accepted_extensions.includes(file_extension)) {
     const file_name = `${req.body.nugget_name}${file_extension}`
     const target_path = `${images_folder_path}/${file_name}`
 
@@ -48,6 +49,7 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
   } else {
     fs.unlink(temp_path, (err) => {
       if (err) console.log(err)
+      // handle to show an error when the client tries to upload a file with wrong format
       res.status(403).send('image must be .png or .jpg!')
     })
   }
