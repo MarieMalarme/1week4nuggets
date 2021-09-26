@@ -4,7 +4,7 @@ import { EditableText } from './EditableText'
 
 export const Hyperlink = ({ link, row, states }) => {
   const [is_hovered, set_is_hovered] = useState(false)
-  const url_prefix = (!link.startsWith('http') && 'http://') || ''
+  const url_prefix = (!link?.startsWith('http') && 'http://') || ''
 
   return (
     <HyperlinkWrapper
