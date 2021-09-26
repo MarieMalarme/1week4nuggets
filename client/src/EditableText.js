@@ -116,7 +116,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
 }
 
 const Gradient = ({ direction, wrapper_ref, fully_scrolled }) => {
-  if (fully_scrolled) return null
+  if (fully_scrolled || !wrapper_ref) return null
   const { top: ref_top, height, width } = wrapper_ref.getBoundingClientRect()
   const top = direction === 'top' ? ref_top : ref_top + height - 100
   return <Div style={{ top, width }} className={`gradient to-${direction}`} />
