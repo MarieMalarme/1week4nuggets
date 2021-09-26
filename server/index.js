@@ -32,9 +32,6 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
     const file_name = `${req.body.file_name}${file_extension}`
     const target_path = `${images_folder_path}/${file_name}`
 
-    // to do: check if an image already exists for the same nugget;
-    // if yes, replace with the new one / delete the old one if it was a different extension
-
     // save the image in the dedicated `/images` folder
     fs.rename(temp_path, target_path, (err) => {
       if (err) {
@@ -46,6 +43,27 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
       console.log(`image ${file_name} successfully uploaded!`)
       res.status(200).send(`image ${file_name} successfully uploaded!`)
     })
+
+    // check if another file with a different extension already exists
+    accepted_extensions
+      .filter((extension) => extension !== file_extension)
+      .forEach((extension) => {
+        const searched_file = `${req.body.file_name}${extension}`
+        const searched_path = `${images_folder_path}/${searched_file}`
+
+        // if no file with another extension is found, return
+        if (!fs.existsSync(searched_path)) return
+        // if a file with another extension is found, delete it
+        fs.unlink(searched_path, (err) => {
+          if (err) {
+            const message = `error while deleting previous image ${searched_file}!`
+            console.log(message)
+            res.status(404).send(message)
+            return
+          }
+          console.log(`previous image ${searched_file} successfully deleted!`)
+        })
+      })
   } else {
     fs.unlink(temp_path, (err) => {
       if (err) console.log(err)
