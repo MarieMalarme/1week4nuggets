@@ -49,6 +49,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
 const UploadInput = ({ nugget, type, form, color, ...props }) => {
   const { set_uploading_image, set_last_update, set_image_hash } = props
   const { uploading_image, nuggets_sheet_coords, week_id } = props
+  const { image_extension, row } = nugget
 
   const upload_image = async (event) => {
     // format & send data from the form - image and nugget name - to the server
@@ -87,7 +88,7 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
         new_value: image_file_extension,
         column: 'image_extension',
         nuggets_sheet_coords,
-        row: nugget.row,
+        row,
       })
 
       // store the last update & re-trigger the data fetching
@@ -117,36 +118,50 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
   }
 
   return (
-    <Label className="hover_blend_mode_difference">
+    <Label
+      ai_flex_end={image_extension}
+      ai_center={!image_extension}
+      jc_flex_end={image_extension}
+      jc_center={!image_extension}
+      className={image_extension ? '' : 'hover_blend_mode_difference'}
+    >
       {uploading_image ? (
         <Loader className="image-loading">Uploading image</Loader>
       ) : (
         <Fragment>
           <Input type="file" name="uploaded_image" onChange={upload_image} />
-          <UploadIcon color={color} />
-          <Span>Upload a pic</Span>
+          <UploadIcon image={image_extension} color={color} />
+          {!image_extension && <Span>Upload a pic</Span>}
         </Fragment>
       )}
     </Label>
   )
 }
 
-const UploadIcon = ({ color }) => {
+const UploadIcon = ({ color, image }) => {
   return (
-    <svg width="90px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130">
-      <path
-        fill="none"
-        stroke={color}
-        strokeWidth={3.4}
-        d="M33.5 48.5 65 17l31.5 31.5M65 93.5V17.5M18 115h94"
-      />
-    </svg>
+    <IconWrapper ma30={image} bg_white={image} w55={image} h55={image}>
+      <svg
+        width={`${image ? 26 : 90}px`}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 130 130"
+      >
+        <path
+          fill="none"
+          stroke={image ? 'black' : color}
+          strokeWidth={image ? 6.5 : 3.4}
+          strokeLinecap="round"
+          d="M33.5 48.5 65 17l31.5 31.5M65 93.5V17.5M18 115h94"
+        />
+      </svg>
+    </IconWrapper>
   )
 }
 
 const Form = Component.relative.h100p.w100p.flex1.form()
 const Input = Component.absolute.c_pointer.o0.w100p.h100p.input()
 const Label =
-  Component.block.fs30.text_center.h100p.w100p.flex.flex_column.ai_center.jc_center.label()
+  Component.block.fs30.text_center.h100p.w100p.flex.flex_column.label()
 const Span = Component.mt30.span()
 const Loader = Component.div()
+const IconWrapper = Component.b_rad50p.flex.ai_center.jc_center.div()
