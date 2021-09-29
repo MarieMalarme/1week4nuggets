@@ -4,16 +4,18 @@ import { update_indexes } from './toolbox'
 import { Nugget } from './Nugget'
 
 export const WeekNuggets = ({ week, weeks_data, ...props }) => {
-  const nuggets = nuggets_types.map((type) => [type, week.nuggets[type] || {}])
+  const { selected_week_index, set_selected_week_index } = props
+  const { set_selected_nugget } = props
+
   const [hovered_nugget, set_hovered_nugget] = useState(null)
   const [is_editing, set_is_editing] = useState(false)
 
-  // set keyboard events' listeners
-  const handle_keydown = (event) => {
-    if (is_editing) return
+  const nuggets_types = get_nuggets_types(week)
+  const nuggets = nuggets_types.map((type) => [type, week.nuggets[type] || {}])
 
-    const { selected_week_index, set_selected_week_index } = props
-    const { set_selected_nugget } = props
+  // set keyboard events' listeners
+  const handle_keydown = (event, index) => {
+    if (is_editing) return
 
     switch (event.key) {
       // change week with keyboard's left & right arrows
@@ -30,15 +32,13 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
 
       // change hovered nugget with keyboard's up & down arrows
       case 'ArrowUp': {
-        const current_index = nuggets_types.indexOf(hovered_nugget)
-        const { prev_index } = update_indexes(current_index, nuggets_types)
-        set_hovered_nugget(nuggets_types[prev_index])
+        const { prev_index } = update_indexes(hovered_nugget, nuggets_types)
+        set_hovered_nugget(prev_index)
         break
       }
       case 'ArrowDown': {
-        const current_index = nuggets_types.indexOf(hovered_nugget)
-        const { next_index } = update_indexes(current_index, nuggets_types)
-        set_hovered_nugget(nuggets_types[next_index])
+        const { next_index } = update_indexes(hovered_nugget, nuggets_types)
+        set_hovered_nugget(next_index)
         break
       }
 
@@ -65,7 +65,7 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
     <Nuggets>
       {nuggets.map(([type, content], index) => (
         <Nugget
-          key={type}
+          key={`${type}-${index}`}
           type={type}
           index={index}
           nuggets={nuggets}
@@ -83,5 +83,12 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
   )
 }
 
-const nuggets_types = ['event', 'project', 'book', 'quote'] // list of all types of nuggets in a week
+const get_nuggets_types = (week) => {
+  const week_nuggets_types = Object.keys(week.nuggets)
+  return [...Array(4).keys()].map(
+    (index) => week_nuggets_types[index] || default_nuggets_types[index],
+  )
+}
+
+const default_nuggets_types = ['talk', 'project', 'book', 'quote']
 const Nuggets = Component.w55p.flex.flex_column.div()

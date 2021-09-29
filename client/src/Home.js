@@ -97,12 +97,12 @@ const format_spreadsheet_data = (response) => {
   const nuggets = rows.map((columns, row_index) => {
     // generate a 2-value array for each column containing the column name and the column value
     // example 1 → ['name', 'The Mouse conference']
-    // example 2 → ['subtype', 'talk']
+    // example 2 → ['type', 'talk']
     const column_entries = columns.map((value, i) => [column_names[i], value])
 
     // create an object with key-value pairs from the 2-value arrays
-    // from → [['name', 'The Mouse conference'], ['subtype', 'talk']]
-    // into → { name: 'The Mouse conference', subtype: 'talk' }
+    // from → [['name', 'The Mouse conference'], ['type', 'talk']]
+    // into → { name: 'The Mouse conference', type: 'talk' }
     return { ...Object.fromEntries(column_entries), row: row_index + 2 }
   })
 
@@ -115,10 +115,10 @@ const format_spreadsheet_data = (response) => {
         .filter((nugget) => Number(nugget.week_id) === week.id)
         .map((nugget) => {
           // extract & ignore 'week_id' property since each nugget is contained in the correponding week
-          const { week_id, type, subtype, ...content } = nugget
-          // use the 'type' or 'subtype' to be set as key name of the nugget & spread the rest of the object
+          const { week_id, type, ...content } = nugget
+          // use the 'type' or 'type' to be set as key name of the nugget & spread the rest of the object
           // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
-          return [type || subtype, { ...content, subtype }]
+          return [type, content]
         })
 
       return {

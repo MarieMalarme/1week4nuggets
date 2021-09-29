@@ -4,7 +4,7 @@ import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
 export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
-  const { name, subtype, subtitle, date, link } = content
+  const { name, subtitle, date, link } = content
   const { description, participants, row } = content
 
   const { hovered_nugget, set_hovered_nugget } = props
@@ -12,9 +12,10 @@ export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
   const { is_signed_in, set_is_editing, set_last_update } = props
   const { nuggets_sheet_coords, week_id } = props
 
-  const is_hovered = hovered_nugget === type
-  const is_selected = selected_nugget === type
-  const is_not_selected_one = selected_nugget && !is_selected
+  const is_hovered = hovered_nugget === index
+  const is_selected = selected_nugget === index
+  const no_selected_nugget = selected_nugget === null
+  const is_not_selected_one = selected_nugget !== null && !is_selected
 
   const variables = { is_selected, is_signed_in, nuggets_sheet_coords }
   const functions = { set_last_update, set_is_editing }
@@ -25,23 +26,23 @@ export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
   return (
     <Wrapper
       key={`nugget-${type}`}
-      onMouseOver={() => set_hovered_nugget(type)}
-      onClick={() => !is_selected && set_selected_nugget(type)}
-      c_pointer={!selected_nugget || !is_selected}
-      pv30={!selected_nugget || is_selected}
+      onMouseOver={() => set_hovered_nugget(index)}
+      onClick={() => !is_selected && set_selected_nugget(index)}
+      c_pointer={no_selected_nugget || !is_selected}
+      pv30={no_selected_nugget || is_selected}
       bg_grey9={is_hovered && !is_selected}
       white={is_hovered && !is_selected}
       bb={index !== nuggets.length - 1}
       ai_center={is_not_selected_one}
       h5p={is_not_selected_one}
-      h25p={!selected_nugget}
+      h25p={no_selected_nugget}
       h85p={is_selected}
     >
       {is_selected && (
         <CloseIcon onClick={clear_selected_nugget}>✕ Esc</CloseIcon>
       )}
-      <SideNotes h100p={is_selected} pt15={!selected_nugget || is_selected}>
-        <Tag>— {subtype || type}</Tag>
+      <SideNotes h100p={is_selected} pt15={no_selected_nugget || is_selected}>
+        <Tag>— {type}</Tag>
         {is_selected && (
           <Fragment>
             <EditableText
@@ -70,7 +71,7 @@ export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
           bb={is_selected && !is_hovered}
           style={{
             fontFamily: font.name,
-            fontSize: ((!selected_nugget || is_selected) && font.size) || 15,
+            fontSize: ((no_selected_nugget || is_selected) && font.size) || 15,
             lineHeight: `${font.line_height}px`,
           }}
         />
@@ -84,7 +85,7 @@ export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
             />
             <Participants
               participants={participants}
-              subtype={subtype || type}
+              type={type}
               row={row}
               states={states}
             />
@@ -101,8 +102,8 @@ export const Nugget = ({ nuggets, type, content, index, font, ...props }) => {
   )
 }
 
-const Participants = ({ participants, subtype, row, states }) => {
-  const label = participants_types[subtype]
+const Participants = ({ participants, type, row, states }) => {
+  const label = participants_types[type]
 
   return (
     <List>
@@ -124,6 +125,7 @@ const participants_types = {
   book: 'authors',
   quote: 'authors',
   event: 'speakers',
+  show: 'artists',
 }
 
 const CloseIcon =
