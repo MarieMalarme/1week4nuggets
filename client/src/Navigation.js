@@ -6,7 +6,7 @@ export const Navigation = ({ week, weeks_data, ...props }) => {
   const { background, color } = week.color_harmonies.navigation
   const { next_index, prev_index } = update_indexes(
     selected_week_index,
-    weeks_data,
+    weeks_data.length,
   )
 
   return (

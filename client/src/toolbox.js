@@ -39,8 +39,8 @@ export const get_color_harmony = ({ darker } = {}) => {
 }
 
 // get next & prev indexes of a given current index passed as argument
-export const update_indexes = (current_index, array) => {
-  const last_index = array.length - 1
+export const update_indexes = (current_index, array_length) => {
+  const last_index = array_length - 1
 
   const is_first_index = current_index === 0
   const is_last_index = current_index === last_index

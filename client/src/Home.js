@@ -111,19 +111,13 @@ const format_spreadsheet_data = (response) => {
     .map((week, week_index) => {
       // dispatch & format as an object all the nuggets in their correponding week
       // example → { event: { name: 'The Mouse conference', date: 'May 2019' }, book: { name: 'Torrent', date: 'June 2021' } }
-      const nuggets_entries = nuggets
-        .filter((nugget) => Number(nugget.week_id) === week.id)
-        .map((nugget) => {
-          // extract & ignore 'week_id' property since each nugget is contained in the correponding week
-          const { week_id, type, ...content } = nugget
-          // use the 'type' or 'type' to be set as key name of the nugget & spread the rest of the object
-          // example → ['event', { name: 'The Mouse conference', date: 'May 2019' }]
-          return [type, content]
-        })
+      const week_nuggets = nuggets.filter(
+        (nugget) => Number(nugget.week_id) === week.id,
+      )
 
       return {
         ...week,
-        nuggets: Object.fromEntries(nuggets_entries),
+        nuggets: week_nuggets,
         // assign color harmonies & fonts combinations for each week object
         color_harmonies: color_harmonies[week_index],
         fonts: fonts_combinations[week_index],

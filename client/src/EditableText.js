@@ -4,7 +4,7 @@ import { Component, Div } from './flags'
 
 export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { states, ...style } = props
-  const { week_id, type, variables, functions } = states
+  const { id, week_id, type, variables, functions } = states
   const { is_selected, is_signed_in, nuggets_sheet_coords } = variables
   const { set_is_editing, set_last_update } = functions
 
@@ -80,6 +80,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
                 set_last_update,
                 column,
                 row,
+                id,
               })
             }
 

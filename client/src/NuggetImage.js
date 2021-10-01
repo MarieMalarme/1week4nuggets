@@ -3,7 +3,7 @@ import { Component } from './flags'
 import { update_nugget_cell } from './data'
 import { log } from './log'
 
-export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
+export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
   const [form, set_form] = useState(null)
   const [image_hash, set_image_hash] = useState(Date.now())
   const [uploading_image, set_uploading_image] = useState(false)
@@ -11,11 +11,11 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
   const { set_last_update, nuggets_sheet_coords } = props
   const { background, color } = week.color_harmonies.work
 
-  const nugget = week.nuggets[selected_nugget_type]
+  const nugget = week.nuggets[selected_nugget_index]
   const image_extension = nugget?.image_extension
   const image_url =
     nugget &&
-    `http://localhost:5000/images/week${week.id}_${selected_nugget_type}.${image_extension}`
+    `http://localhost:5000/images/nugget_${nugget.id}.${image_extension}`
 
   return (
     <Form
@@ -35,7 +35,7 @@ export const NuggetImage = ({ week, selected_nugget_type, ...props }) => {
           uploading_image={uploading_image}
           set_last_update={set_last_update}
           set_image_hash={set_image_hash}
-          type={selected_nugget_type}
+          type={nugget.type}
           nugget={nugget}
           week_id={week.id}
           color={color}

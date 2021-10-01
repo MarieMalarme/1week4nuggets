@@ -1,7 +1,7 @@
 import { log } from './log'
 
 export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
-  const { column, row, type, set_last_update, nuggets_sheet_coords } = props
+  const { id, column, row, type, set_last_update, nuggets_sheet_coords } = props
   const cell_row = row || nuggets_sheet_coords.last_row
   const cell = `${nuggets_sheet_coords.columns[column]}${cell_row}`
 
@@ -26,6 +26,12 @@ export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
         // add the type
         range: `'Nuggets'!${nuggets_sheet_coords.columns['type']}${cell_row}`,
         values: [[type]],
+        majorDimension: 'ROWS',
+      },
+      {
+        // add nugget id when creating new nugget
+        range: `'Nuggets'!${nuggets_sheet_coords.columns['id']}${cell_row}`,
+        values: [[id]],
         majorDimension: 'ROWS',
       },
     ],
@@ -67,4 +73,12 @@ export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
       throw new Error(message)
     }
   }
+}
+
+// get a nugget id from its week and its index:
+// sum up the total amount of nuggets from the previous weeks
+// and add the index of the nugget in the current week
+export const get_nugget_id = (week_id, nugget_index) => {
+  const previous_weeks_nuggets = (week_id - 1) * 4
+  return previous_weeks_nuggets + (nugget_index + 1)
 }
