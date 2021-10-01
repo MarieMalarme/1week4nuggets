@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { Component } from './flags'
-import { get_nugget_id } from './data'
+import { get_nugget_id, update_nugget_cell } from './data'
+import { update_indexes } from './toolbox'
 import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
@@ -25,6 +26,23 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
 
   const clear_selected_nugget_index = () => set_selected_nugget_index(null)
 
+  const update_nugget_type = () => {
+    if (!is_selected) return
+    const nuggets_types = Object.keys(participants_types)
+    const type_index = nuggets_types.indexOf(type)
+    const { next_index } = update_indexes(type_index, nuggets_types.length)
+    update_nugget_cell({
+      new_value: nuggets_types[next_index],
+      type: nuggets_types[next_index],
+      nuggets_sheet_coords,
+      set_last_update,
+      column: 'type',
+      week_id,
+      row,
+      id,
+    })
+  }
+
   return (
     <Wrapper
       key={`nugget-${type}`}
@@ -44,7 +62,9 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
         <CloseIcon onClick={clear_selected_nugget_index}>✕ Esc</CloseIcon>
       )}
       <SideNotes h100p={is_selected} pt15={no_selected_nugget || is_selected}>
-        <Tag>— {type}</Tag>
+        <Tag c_pointer={is_selected} onClick={update_nugget_type}>
+          — {type}
+        </Tag>
         {is_selected && (
           <Fragment>
             <EditableText
