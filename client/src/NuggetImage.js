@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { Component } from './flags'
-import { update_nugget_cell } from './data'
+import { update_nugget_cell, get_nugget_id } from './data'
 import { log } from './log'
 
 export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
@@ -11,7 +11,10 @@ export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
   const { set_last_update, nuggets_sheet_coords } = props
   const { background, color } = week.color_harmonies.work
 
-  const nugget = week.nuggets[selected_nugget_index]
+  const nugget = week.nuggets.find((nugget) => {
+    return Number(nugget.id) === get_nugget_id(week.id, selected_nugget_index)
+  })
+
   const image_extension = nugget?.image_extension
   const image_url =
     nugget &&
@@ -56,7 +59,7 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
     const form_data = new FormData()
     const image_file = event.target.files[0]
     form_data.append('uploaded_image', image_file)
-    form_data.append('file_name', `week${week_id}_${type}`)
+    form_data.append('file_name', `nugget_${nugget.id}`)
 
     const image_file_extension = image_file.name.slice(
       image_file.name.lastIndexOf('.') + 1,
@@ -80,16 +83,19 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
         'color: cyan',
       )
 
-      // to do: only update when the new extension is different from the previous one
       // update nugget image extension value in spreadsheet
-      await update_nugget_cell({
-        type,
-        week_id,
-        new_value: image_file_extension,
-        column: 'image_extension',
-        nuggets_sheet_coords,
-        row,
-      })
+      // only when the new extension is different from the previous one
+      if (image_file_extension !== image_extension) {
+        console.log('updating image extension in spreadsheet')
+        await update_nugget_cell({
+          type,
+          week_id,
+          new_value: image_file_extension,
+          column: 'image_extension',
+          nuggets_sheet_coords,
+          row,
+        })
+      }
 
       // store the last update & re-trigger the data fetching
       set_last_update({

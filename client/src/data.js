@@ -79,6 +79,7 @@ export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
 // sum up the total amount of nuggets from the previous weeks
 // and add the index of the nugget in the current week
 export const get_nugget_id = (week_id, nugget_index) => {
-  const previous_weeks_nuggets = (week_id - 1) * 4
-  return previous_weeks_nuggets + (nugget_index + 1)
+  if (nugget_index === null || nugget_index === undefined) return
+  const previous_weeks_nuggets = (Number(week_id) - 1) * 4
+  return previous_weeks_nuggets + (Number(nugget_index) + 1)
 }
