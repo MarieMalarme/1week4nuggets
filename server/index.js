@@ -73,6 +73,22 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
   }
 })
 
+// handle delete route to delete an image file
+app.delete('/delete', (req, res) => {
+  const { file_name } = req.body
+  const file_path = `${images_folder_path}/${file_name}`
+
+  fs.unlink(file_path, (err) => {
+    if (err) {
+      console.log(err)
+      res.status(404).send(`error while deleting image file ${file_name}!`)
+      return
+    }
+
+    res.status(200).send(`image file ${file_name} successfully deleted!`)
+  })
+})
+
 // serve the images files
 app.use('/images', express.static(images_folder_path))
 
