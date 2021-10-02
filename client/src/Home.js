@@ -62,6 +62,8 @@ const Home = () => {
     fetch_spreadsheet_data()
   }, [gapi_loaded, last_update])
 
+  if (!gapi_loaded) return <Feedback>Loading Google API...</Feedback>
+
   if (weeks_data === 'loading')
     return <Feedback>Loading nuggets from spreadsheet...</Feedback>
 
@@ -152,7 +154,7 @@ const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 const WEEK = DAY * 7
 
-const first_day = new Date('2021-09-13')
+const first_day = new Date('2021-09-06')
 const today = new Date()
 first_day.setHours(0, 0, 0)
 today.setHours(0, 0, 0)
@@ -200,3 +202,7 @@ const Page = Component.fixed.fw200.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
 
 export default Home
+
+// add title 1 week 4 nuggets
+// make possible to add an image when there is no content yet
+// replace localhost url by process.env
