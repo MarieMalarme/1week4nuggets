@@ -5,10 +5,10 @@ export const Authentication = ({ is_signed_in }) => {
 
   return (
     <Button onClick={is_signed_in ? signOut : signIn}>
-      {is_signed_in ? 'out' : 'in'}
+      {is_signed_in ? 'o u t' : 'i n'}
     </Button>
   )
 }
 
 const Button =
-  Component.c_pointer.zi1.fw500.shadow_a_s.fixed.t_40.ba.r25.wm_v_rl.flex.ai_center.text_upright.pt55.pb15.text_left.b_black.w40.b_rad20.uppercase.ls2.fs8.div()
+  Component.blend_difference.white.b_white.c_pointer.zi1.fw700.shadow_a_s.fixed.t20.r20.ba.pv10.ph20.b_rad20.uppercase.ls1.fs9.div()
