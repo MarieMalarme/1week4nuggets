@@ -16,9 +16,8 @@ export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
   })
 
   const image_extension = nugget?.image_extension
-  const image_url =
-    nugget &&
-    `http://localhost:5000/images/nugget_${nugget.id}.${image_extension}`
+  const image_file_name = nugget && `nugget_${nugget.id}.${image_extension}`
+  const image_url = nugget && `http://localhost:5000/images/${image_file_name}`
 
   return (
     <Form
@@ -43,6 +42,14 @@ export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
           week_id={week.id}
           color={color}
           form={form}
+        />
+      )}
+      {image_extension && (
+        <DeleteButton
+          week={week}
+          nugget={nugget}
+          set_last_update={set_last_update}
+          nuggets_sheet_coords={nuggets_sheet_coords}
         />
       )}
     </Form>
@@ -144,25 +151,87 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
   )
 }
 
-const UploadIcon = ({ color, image }) => {
-  return (
-    <IconWrapper ma30={image} bg_white={image} w55={image} h55={image}>
-      <svg
-        width={`${image ? 26 : 90}px`}
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 130 130"
-      >
-        <path
-          fill="none"
-          stroke={image ? 'black' : color}
-          strokeWidth={image ? 6.5 : 3.4}
-          strokeLinecap="round"
-          d="M33.5 48.5 65 17l31.5 31.5M65 93.5V17.5M18 115h94"
-        />
-      </svg>
-    </IconWrapper>
-  )
+const UploadIcon = ({ color, image }) => (
+  <IconWrapper
+    mr30={image}
+    mb100={image}
+    bg_white={image}
+    w55={image}
+    h55={image}
+  >
+    <svg
+      width={`${image ? 26 : 90}px`}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 130 130"
+    >
+      <path
+        fill="none"
+        stroke={image ? 'black' : color}
+        strokeWidth={image ? 6.5 : 3.4}
+        strokeLinecap="round"
+        d="M33.5 48.5 65 17l31.5 31.5M65 93.5V17.5M18 115h94"
+      />
+    </svg>
+  </IconWrapper>
+)
+
+const DeleteButton = ({ nugget, week, ...props }) => {
+  const { set_last_update, nuggets_sheet_coords } = props
+
+  const delete_image = async (event) => {
+    event.preventDefault()
+
+    try {
+      const file_name = `nugget_${nugget.id}.${nugget.image_extension}`
+
+      // fetch to delete the image file on the server
+      await fetch('http://localhost:5000/delete', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ file_name }),
+        credentials: 'include',
+        method: 'DELETE',
+      })
+
+      // delete the image_extension value on the spreadsheet
+      await update_nugget_cell({
+        type: nugget.type,
+        week_id: week.id,
+        new_value: '',
+        column: 'image_extension',
+        nuggets_sheet_coords,
+        row: nugget.row,
+      })
+
+      set_last_update({
+        date: new Date(),
+        event: `Deleted ${nugget.name} pic!`,
+      })
+    } catch (error) {
+      log.error(error, `uploading ${nugget.name} pic!`)
+
+      set_last_update({
+        date: new Date(),
+        event: `Failed to delete ${nugget.name} pic!`,
+      })
+    }
+  }
+
+  return <Button onClick={delete_image}>{DeleteIcon}</Button>
 }
+
+const DeleteIcon = (
+  <svg width="22px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130">
+    <path
+      fill="none"
+      stroke="var(--grey8)"
+      strokeWidth={10}
+      d="m24 24 82 82M106 24l-82 82"
+    />
+  </svg>
+)
 
 const Form = Component.relative.h100p.w100p.flex1.form()
 const Input = Component.absolute.c_pointer.o0.w100p.h100p.input()
@@ -171,3 +240,5 @@ const Label =
 const Span = Component.mt30.span()
 const Loader = Component.div()
 const IconWrapper = Component.b_rad50p.flex.ai_center.jc_center.div()
+const Button =
+  Component.c_pointer.flex.ai_center.jc_center.bg_white.b30.r30.w55.h55.b_rad50p.ba0.absolute.b0.button()
