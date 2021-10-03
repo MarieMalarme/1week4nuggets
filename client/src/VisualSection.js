@@ -3,7 +3,7 @@ import { Component } from './flags'
 import { update_nugget_cell, get_nugget_id } from './data'
 import { log } from './log'
 
-export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
+export const VisualSection = ({ week, selected_nugget_index, ...props }) => {
   const [form, set_form] = useState(null)
   const [image_hash, set_image_hash] = useState(Date.now())
   const [uploading_image, set_uploading_image] = useState(false)
@@ -239,7 +239,7 @@ const DeleteIcon = (
   </svg>
 )
 
-const Presentation = Component.white.ph35.pv30.h100p.w100p.flex1.div()
+const Presentation = Component.white.ph35.pv30.h100p.w100p.flex1.section()
 const Title = Component.fw200.fs13.h1()
 const Subtitle = Component.mt5.fw200.fs13.h2()
 const Form = Component.relative.h100p.w100p.flex1.form()

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Component } from './flags'
 import { Navigation } from './Navigation'
 import { WeekDates } from './WeekDates'
-import { NuggetImage } from './NuggetImage'
+import { VisualSection } from './VisualSection'
 import { WeekNuggets } from './WeekNuggets'
 
 export const WeekContent = (props) => {
@@ -28,7 +28,7 @@ export const WeekContent = (props) => {
         nuggets_sheet_coords={nuggets_sheet_coords}
       />
       <RightPanel>
-        <NuggetImage
+        <VisualSection
           week={selected_week}
           nuggets_sheet_coords={nuggets_sheet_coords}
           selected_nugget_index={selected_nugget_index}
