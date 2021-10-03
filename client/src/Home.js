@@ -203,6 +203,5 @@ const Feedback = Component.fixed.b70.l80.fs50.div()
 
 export default Home
 
-// add title 1 week 4 nuggets
 // make possible to add an image when there is no content yet
 // replace localhost url by process.env
