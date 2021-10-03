@@ -15,6 +15,14 @@ export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
     return Number(nugget.id) === get_nugget_id(week.id, selected_nugget_index)
   })
 
+  if (!nugget)
+    return (
+      <Presentation style={{ background }}>
+        <Title>1 week, 4 nuggets</Title>
+        <Subtitle>Weekly index for creative inspirations</Subtitle>
+      </Presentation>
+    )
+
   const image_extension = nugget?.image_extension
   const image_file_name = nugget && `nugget_${nugget.id}.${image_extension}`
   const image_url = nugget && `http://localhost:5000/images/${image_file_name}`
@@ -30,20 +38,18 @@ export const NuggetImage = ({ week, selected_nugget_index, ...props }) => {
             : background,
       }}
     >
-      {nugget && (
-        <UploadInput
-          nuggets_sheet_coords={nuggets_sheet_coords}
-          set_uploading_image={set_uploading_image}
-          uploading_image={uploading_image}
-          set_last_update={set_last_update}
-          set_image_hash={set_image_hash}
-          type={nugget.type}
-          nugget={nugget}
-          week_id={week.id}
-          color={color}
-          form={form}
-        />
-      )}
+      <UploadInput
+        nuggets_sheet_coords={nuggets_sheet_coords}
+        set_uploading_image={set_uploading_image}
+        uploading_image={uploading_image}
+        set_last_update={set_last_update}
+        set_image_hash={set_image_hash}
+        type={nugget.type}
+        nugget={nugget}
+        week_id={week.id}
+        color={color}
+        form={form}
+      />
       {image_extension && (
         <DeleteButton
           week={week}
@@ -233,6 +239,9 @@ const DeleteIcon = (
   </svg>
 )
 
+const Presentation = Component.white.ph35.pv30.h100p.w100p.flex1.div()
+const Title = Component.fw200.fs13.h1()
+const Subtitle = Component.mt5.fw200.fs13.h2()
 const Form = Component.relative.h100p.w100p.flex1.form()
 const Input = Component.absolute.c_pointer.o0.w100p.h100p.input()
 const Label =
