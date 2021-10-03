@@ -5,15 +5,15 @@ import { log } from './log'
 
 export const NuggetImage = ({ nugget, week, ...props }) => {
   const { set_last_update, nuggets_sheet_coords } = props
-  const { background, color } = week.color_harmonies.work
+  const { background, color } = week.color_harmonies.visual
 
   const [form, set_form] = useState(null)
   const [image_hash, set_image_hash] = useState(Date.now())
   const [uploading_image, set_uploading_image] = useState(false)
 
-  const image_extension = nugget?.image_extension
-  const image_file_name = nugget && `nugget_${nugget.id}.${image_extension}`
-  const image_url = nugget && `http://localhost:5000/images/${image_file_name}`
+  const { image_extension, id, type } = nugget
+  const image_file_name = `nugget_${id}.${image_extension}`
+  const image_url = `http://localhost:5000/images/${image_file_name}`
 
   return (
     <Form
@@ -32,7 +32,7 @@ export const NuggetImage = ({ nugget, week, ...props }) => {
         uploading_image={uploading_image}
         set_last_update={set_last_update}
         set_image_hash={set_image_hash}
-        type={nugget.type}
+        type={type}
         nugget={nugget}
         week_id={week.id}
         color={color}
@@ -94,6 +94,7 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
           column: 'image_extension',
           nuggets_sheet_coords,
           row,
+          id: nugget.id,
         })
       }
 

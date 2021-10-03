@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Component } from './flags'
 import { update_indexes } from './toolbox'
-import { get_nugget_id } from './data'
+import { get_nugget_id, nuggets_types } from './data'
 import { Nugget } from './Nugget'
 
 export const WeekNuggets = ({ week, weeks_data, ...props }) => {
@@ -16,7 +16,7 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
     const matching_nugget = week.nuggets.find(
       (nugget) => Number(nugget.id) === get_nugget_id(week.id, index),
     )
-    return matching_nugget || { type: default_nuggets_types[index] }
+    return matching_nugget || { type: nuggets_types[index] }
   })
 
   // set keyboard events' listeners
@@ -90,5 +90,4 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
   )
 }
 
-const default_nuggets_types = ['talk', 'project', 'book', 'quote']
 const Nuggets = Component.w55p.flex.flex_column.div()

@@ -83,3 +83,5 @@ export const get_nugget_id = (week_id, nugget_index) => {
   const previous_weeks_nuggets = (Number(week_id) - 1) * 4
   return previous_weeks_nuggets + (Number(nugget_index) + 1)
 }
+
+export const nuggets_types = ['talk', 'project', 'book', 'quote']

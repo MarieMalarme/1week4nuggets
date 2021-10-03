@@ -171,7 +171,7 @@ const weeks = [...Array(weeks_amount).keys()].map((index) => {
 
 const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
   dates: get_color_harmony(),
-  work: get_color_harmony({ darker: true }),
+  visual: get_color_harmony({ darker: true }),
   navigation: get_color_harmony(),
 }))
 
