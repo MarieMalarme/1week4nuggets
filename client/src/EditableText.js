@@ -70,8 +70,16 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
           onBlur={() => {
             // to do: also update spreadsheet after editing stops
 
-            // update the spreadsheet if the input value has changed
+            // check if the input value has changed
             if (text !== initial_value) {
+              // if the value is only spaces, set the text to an empty string
+              if (text.length && !text.trim().length) {
+                textarea_ref.innerText = ''
+                set_text('')
+                if (initial_value === '') return
+              }
+
+              // update the spreadsheet with the new value
               update_nugget_cell({
                 type,
                 week_id,
