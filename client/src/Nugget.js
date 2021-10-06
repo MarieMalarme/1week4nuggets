@@ -127,6 +127,8 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
 const Participants = ({ participants, type, row, states }) => {
   const label = participants_types[type]
 
+  if (!participants) return null
+
   return (
     <List>
       <Heading>{label}:</Heading>
@@ -157,5 +159,5 @@ const Content = Component.w100p.flex.flex_column.mr100.div()
 const SideNotes =
   Component.relative.flex.flex_column.ai_flex_start.flex_shrink0.w100.mr30.w100.div()
 const Tag = Component.uppercase.ls2.fs10.span()
-const List = Component.fs13.mb30.flex.ai_flex_start.div()
+const List = Component.fs13.mt40.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()

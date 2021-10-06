@@ -39,12 +39,22 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
     set_scrollable(scroll_height > height)
   }, [text, wrapper_ref, textarea_ref, column])
 
-  // if the user is not signed in, do not display the component when the text is empty
-  // so the user without writing access can't see the placeholder with instructions to edit
-  if (!is_signed_in && !initial_value) return null
-
   // get the styled input component corresponding to the type of item
   const Input = inputs_components[column]
+
+  // if the user is not signed in, do not display the component when the text is empty
+  // so the user without writing access can't see the placeholder with instructions to edit
+  // with 2 exceptions: display the type for the name & 'no content' for the description
+  if (!is_signed_in && !initial_value) {
+    if (column !== 'name' && column !== 'description') return null
+    return (
+      <Wrapper key={`placeholder-${type}`}>
+        <Input capitalize {...style}>
+          {column === 'name' ? type : 'No content!'}
+        </Input>
+      </Wrapper>
+    )
+  }
 
   return (
     <Fragment>
@@ -134,8 +144,8 @@ const Gradient = ({ direction, wrapper_ref, fully_scrolled }) => {
 const inputs_components = {
   name: Component.ws_pre_w.ol_none.span(),
   participants: Component.ws_pre_w.ol_none.div(),
-  subtitle: Component.ws_pre_w.mt10.fs40.lh45.grey3.mb40.ol_none.div(),
-  description: Component.ws_pre_w.lh17.fs14.w100p.ol_none.div(),
+  subtitle: Component.ws_pre_w.mt10.fs40.lh45.grey3.ol_none.div(),
+  description: Component.mt30.ws_pre_w.lh17.fs14.w100p.ol_none.div(),
   date: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.mt60.mb15.grey3.div(),
   link: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.w100p.grey3.span(),
 }
