@@ -33,6 +33,7 @@ export const WeekContent = (props) => {
           nuggets_sheet_coords={nuggets_sheet_coords}
           selected_nugget_index={selected_nugget_index}
           set_last_update={set_last_update}
+          is_signed_in={is_signed_in}
         />
         <Navigation
           week={selected_week}
