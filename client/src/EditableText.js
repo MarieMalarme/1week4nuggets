@@ -83,10 +83,11 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
             // check if the input value has changed
             if (text !== initial_value) {
               // if the value is only spaces, set the text to an empty string
-              if (text.length && !text.trim().length) {
+              if (!text.trim().length && (!initial_value || text.length)) {
                 textarea_ref.innerText = ''
                 set_text('')
-                if (initial_value === '') return
+                // if the inital value was already empty, do not update the spreadsheet with an empty string
+                if (!initial_value || initial_value === '') return
               }
 
               // update the spreadsheet with the new value
