@@ -13,7 +13,7 @@ export const NuggetImage = ({ nugget, week, ...props }) => {
 
   const { image_extension, id, type } = nugget
   const image_file_name = `nugget_${id}.${image_extension}`
-  const image_url = `http://localhost:5000/images/${image_file_name}`
+  const image_url = `${process.env.REACT_APP_API}/images/${image_file_name}`
 
   return (
     <Form
@@ -73,7 +73,7 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
       log.write('Uploading image to server')
 
       // fetch post route to upload the image to the server
-      await fetch('http://localhost:5000/upload', {
+      await fetch(`${process.env.REACT_APP_API}/upload`, {
         credentials: 'include',
         method: 'POST',
         body: form_data,
@@ -179,7 +179,7 @@ const DeleteButton = ({ nugget, week, ...props }) => {
       const file_name = `nugget_${nugget.id}.${nugget.image_extension}`
 
       // fetch to delete the image file on the server
-      await fetch('http://localhost:5000/delete', {
+      await fetch(`${process.env.REACT_APP_API}/delete`, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

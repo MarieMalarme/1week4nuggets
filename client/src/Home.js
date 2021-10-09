@@ -202,5 +202,3 @@ const Page = Component.fixed.fw200.w100vw.div()
 const Feedback = Component.fixed.b70.l80.fs50.div()
 
 export default Home
-
-// replace localhost url by process.env

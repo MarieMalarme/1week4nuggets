@@ -6,11 +6,11 @@ const dotenv = require('dotenv')
 const fs = require('fs')
 const path = require('path')
 
-const app = express()
-const port = process.env.port || 5000
-
 // set up config with .env file
 dotenv.config()
+
+const app = express()
+const port = process.env.PORT || 5000
 
 // set up body parser
 app.use(body_parser.json())
