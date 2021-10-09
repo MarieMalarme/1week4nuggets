@@ -23,7 +23,7 @@ const images_folder_path = path.join(__dirname, '/images')
 const upload = multer({ dest: images_folder_path })
 
 // handle post route to upload an image file - received by multer in `req.file`
-app.post('/upload', upload.single('uploaded_image'), (req, res) => {
+app.post('/api/upload', upload.single('uploaded_image'), (req, res) => {
   const temp_path = req.file.path
   const file_extension = path.extname(req.file.originalname).toLowerCase()
   const accepted_extensions = ['.png', '.jpg', '.jpeg']
@@ -74,7 +74,7 @@ app.post('/upload', upload.single('uploaded_image'), (req, res) => {
 })
 
 // handle delete route to delete an image file
-app.delete('/delete', (req, res) => {
+app.delete('/api/delete', (req, res) => {
   const { file_name } = req.body
   const file_path = `${images_folder_path}/${file_name}`
 
@@ -90,7 +90,7 @@ app.delete('/delete', (req, res) => {
 })
 
 // serve the images files
-app.use('/images', express.static(images_folder_path))
+app.use('/api/images', express.static(images_folder_path))
 
 app.listen(port, () => {
   console.log(`server listening at http://localhost:${port}`)
