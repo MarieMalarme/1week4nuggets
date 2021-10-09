@@ -79,10 +79,11 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
       </SideNotes>
       <Content h100p={is_selected}>
         <EditableText
-          initial_value={name}
           row={row}
           column="name"
           states={states}
+          initial_value={name}
+          grey4={!name}
           clamp={!is_selected}
           clamp2={!is_selected}
           clamp1={is_not_selected_one}

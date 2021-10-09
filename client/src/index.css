@@ -70,7 +70,14 @@ button {
 
 [contenteditable]:empty:before {
   content: attr(placeholder);
+}
+
+:not(#name)[contenteditable]:empty:before {
   opacity: 40%;
+}
+
+#name[contenteditable]:empty:before {
+  color: var(--grey4);
 }
 
 [contenteditable] {

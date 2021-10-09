@@ -70,6 +70,7 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
         }}
       >
         <Input
+          id={column}
           block={!text?.length}
           elemRef={set_textarea_ref}
           placeholder={`+  Add ${column}`}
