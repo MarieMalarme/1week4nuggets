@@ -149,6 +149,7 @@ const participants_types = {
   talk: 'speakers',
   project: 'artists',
   exhibition: 'artists',
+  workshop: 'teachers',
   book: 'authors',
   quote: 'authors',
   event: 'speakers',
