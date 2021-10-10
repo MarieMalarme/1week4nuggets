@@ -130,8 +130,6 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
 const Participants = ({ participants, type, row, states }) => {
   const label = participants_types[type]
 
-  if (!participants) return null
-
   return (
     <List>
       <Heading>{label}:</Heading>
