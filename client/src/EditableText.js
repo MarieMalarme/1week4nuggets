@@ -8,20 +8,10 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
   const { is_selected, is_signed_in, nuggets_sheet_coords } = variables
   const { set_is_editing, set_last_update } = functions
 
+  const [fully_scrolled, set_fully_scrolled] = useState(initial_fully_scrolled)
   const [wrapper_ref, set_wrapper_ref] = useState(null)
   const [text_ref, set_text_ref] = useState(null)
   const [text, set_text] = useState(null)
-
-  const [scrollable, set_scrollable] = useState(false)
-  const [fully_scrolled, set_fully_scrolled] = useState(initial_fully_scrolled)
-
-  // scroll the wrapper to top & set the fully scrolled
-  // on init of the wrapper for "description" input
-  useEffect(() => {
-    if (!wrapper_ref || column !== 'description') return
-    wrapper_ref.scroll(0, 0)
-    set_fully_scrolled(initial_fully_scrolled)
-  }, [wrapper_ref, row, column])
 
   // set input's text value and text state to the initial value
   // when the data is fetched or updated from the spreadsheet
@@ -30,14 +20,6 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
     text_ref.innerText = initial_value || ''
     set_text(initial_value || '')
   }, [text_ref, row])
-
-  // check if the "description" input has scrollable content
-  useLayoutEffect(() => {
-    if (!text_ref || !wrapper_ref || column !== 'description') return
-    const height = wrapper_ref.clientHeight
-    const scroll_height = text_ref.scrollHeight
-    set_scrollable(scroll_height > height)
-  }, [text, wrapper_ref, text_ref, column])
 
   // get the styled input component corresponding to the type of item
   const Input = inputs_components[column]
@@ -138,32 +120,63 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
           {...style}
         />
       </Wrapper>
-      {scrollable &&
-        // display gradients on the "description" input if the content is scrollable
-        Object.entries(fully_scrolled).map(([direction, fully_scrolled]) => (
-          <Gradient
-            key={direction}
-            direction={direction}
-            fully_scrolled={fully_scrolled}
-            wrapper_ref={wrapper_ref}
-          />
-        ))}
+      {column === 'description' && (
+        <ScrollGradients
+          row={row}
+          text_ref={text_ref}
+          wrapper_ref={wrapper_ref}
+          fully_scrolled={fully_scrolled}
+          set_fully_scrolled={set_fully_scrolled}
+        />
+      )}
     </Fragment>
   )
 }
 
-const Gradient = ({ direction, wrapper_ref, fully_scrolled }) => {
-  if (fully_scrolled || !wrapper_ref) return null
-  const { top: ref_top, height, width } = wrapper_ref.getBoundingClientRect()
-  const top = direction === 'top' ? ref_top : ref_top + height - 100
-  return <Div style={{ top, width }} className={`gradient to-${direction}`} />
+// display top and / or bottom gradients of the "description" input if the content is scrollable
+const ScrollGradients = (props) => {
+  const { wrapper_ref, text_ref, row } = props
+  const { fully_scrolled, set_fully_scrolled } = props
+
+  const [scrollable, set_scrollable] = useState(false)
+  const [wrapper_dimensions, set_wrapper_dimensions] = useState()
+
+  // scroll the wrapper to top & set the default fully scrolled on init of the wrapper
+  useEffect(() => {
+    if (!wrapper_ref) return
+    wrapper_ref.scroll(0, 0)
+    set_fully_scrolled(initial_fully_scrolled)
+  }, [wrapper_ref, row, set_fully_scrolled])
+
+  // observe the wrapper to check if the input has scrollable content & set its wrapper_dimensions
+  useLayoutEffect(() => {
+    if (!text_ref || !wrapper_ref) return
+    const resizeObserver = new ResizeObserver(() => {
+      const height = wrapper_ref.clientHeight
+      const scroll_height = text_ref.scrollHeight
+      set_scrollable(scroll_height > height)
+      set_wrapper_dimensions(wrapper_ref.getBoundingClientRect())
+    })
+
+    resizeObserver.observe(wrapper_ref)
+    return () => resizeObserver.disconnect()
+  }, [wrapper_ref, text_ref])
+
+  if (!scrollable || !wrapper_dimensions) return null
+
+  return Object.entries(fully_scrolled).map(([direction, fully_scrolled]) => {
+    if (fully_scrolled) return null
+    const { top: ref_top, height, width } = wrapper_dimensions
+    const top = direction === 'top' ? ref_top : ref_top + height - 100
+    return <Div style={{ top, width }} className={`gradient to-${direction}`} />
+  })
 }
 
 const inputs_components = {
   name: Component.ws_pre_w.ol_none.span(),
-  participants: Component.ws_pre_w.ol_none.div(),
-  subtitle: Component.ws_pre_w.mt10.fs40.lh45.grey3.ol_none.div(),
-  description: Component.mt30.ws_pre_w.lh17.fs14.w100p.ol_none.div(),
+  participants: Component.mb30.ws_pre_w.ol_none.div(),
+  subtitle: Component.ws_pre_w.mt10.mb40.fs40.lh45.grey3.ol_none.div(),
+  description: Component.ws_pre_w.lh17.fs14.w100p.ol_none.div(),
   date: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.mt60.mb15.grey3.div(),
   link: Component.ws_pre_w.uppercase.ol_none.ls2.fs10.w100p.grey3.span(),
 }
