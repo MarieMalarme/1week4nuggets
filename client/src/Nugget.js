@@ -84,14 +84,16 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
           states={states}
           initial_value={name}
           grey4={!name}
+          b_grey4={!name}
           clamp={!is_selected}
           clamp2={!is_selected}
           clamp1={is_not_selected_one}
           bg_grey9={is_selected && is_hovered}
           white={is_selected && is_hovered}
           grey9={is_selected && !is_hovered}
-          bw2={is_selected && !is_hovered}
-          bb={is_selected && !is_hovered}
+          b_white={is_selected && is_hovered}
+          bw2={is_selected}
+          bb={is_selected}
           style={{
             fontFamily: font.name,
             fontSize: ((no_selected_nugget || is_selected) && font.size) || 15,

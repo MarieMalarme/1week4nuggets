@@ -73,7 +73,7 @@ button {
 }
 
 :not(#name)[contenteditable]:empty:before {
-  opacity: 40%;
+  opacity: 0.4;
 }
 
 #name[contenteditable]:empty:before {
