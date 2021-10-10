@@ -136,7 +136,12 @@ const UploadInput = ({ nugget, type, form, color, ...props }) => {
         <Loader className="image-loading">Uploading image</Loader>
       ) : (
         <Fragment>
-          <Input type="file" name="uploaded_image" onChange={upload_image} />
+          <Input
+            type="file"
+            name="uploaded_image"
+            onChange={upload_image}
+            title="Upload a new pic"
+          />
           <UploadIcon image={image_extension} color={color} />
           {!image_extension && <Span>Upload a pic</Span>}
         </Fragment>
