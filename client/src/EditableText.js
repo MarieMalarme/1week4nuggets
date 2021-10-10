@@ -87,20 +87,20 @@ export const EditableText = ({ initial_value, row, column, ...props }) => {
           onFocus={() => set_is_editing(column)} // enter edit mode when focusing the textarea
           onBlur={() => {
             // check if the input value has changed
-            if (text === initial_value) return
+            if (text !== initial_value) {
+              // if the value is only whitespaces, set the text to an empty string
+              if (!text.trim().length && (!initial_value || text.length)) {
+                text_ref.innerText = ''
+                set_text('')
+                // if the inital value was already empty, do not update the spreadsheet with an empty string
+                if (!initial_value || initial_value === '') return
+              }
 
-            // if the value is only whitespaces, set the text to an empty string
-            if (!text.trim().length && (!initial_value || text.length)) {
-              text_ref.innerText = ''
-              set_text('')
-              // if the inital value was already empty, do not update the spreadsheet with an empty string
-              if (!initial_value || initial_value === '') return
+              // clear the timeout id in case the function in the onInput event was already triggered
+              clearTimeout(timeout_id)
+              // update the spreadsheet with the new value
+              update_nugget()
             }
-
-            // clear the timeout id in case the function in the onInput event was already triggered
-            clearTimeout(timeout_id)
-            // update the spreadsheet with the new value
-            update_nugget()
 
             // exit edit mode when clicking outside the input
             set_is_editing(false)

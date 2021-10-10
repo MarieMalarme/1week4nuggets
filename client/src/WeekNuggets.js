@@ -81,7 +81,6 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
           font={week.fonts[index]}
           hovered_nugget_index={hovered_nugget_index}
           set_hovered_nugget_index={set_hovered_nugget_index}
-          is_editing={is_editing}
           set_is_editing={set_is_editing}
           {...props}
         />
