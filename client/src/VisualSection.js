@@ -3,7 +3,6 @@ import { get_nugget_id, nuggets_types } from './data'
 import { NuggetImage } from './NuggetImage'
 
 export const VisualSection = ({ week, selected_nugget_index, ...props }) => {
-  const { is_signed_in, ...rest } = props
   const { background } = week.color_harmonies.visual
 
   // check if the nugget already exists - if not, create a default nugget object with id & type
@@ -12,8 +11,8 @@ export const VisualSection = ({ week, selected_nugget_index, ...props }) => {
     (nugget) => Number(nugget.id) === selected_nugget_id,
   ) || { id: selected_nugget_id, type: nuggets_types[selected_nugget_index] }
 
-  return is_signed_in && selected_nugget_id ? (
-    <NuggetImage nugget={selected_nugget} week={week} {...rest} />
+  return selected_nugget_id ? (
+    <NuggetImage nugget={selected_nugget} week={week} {...props} />
   ) : (
     <Presentation style={{ background }}>
       <Title>1 week, 4 nuggets</Title>

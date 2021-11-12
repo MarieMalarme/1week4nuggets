@@ -4,7 +4,7 @@ import { update_nugget_cell } from './data'
 import { log } from './log'
 
 export const NuggetImage = ({ nugget, week, ...props }) => {
-  const { set_last_update, nuggets_sheet_coords } = props
+  const { set_last_update, nuggets_sheet_coords, is_signed_in } = props
   const { background, color } = week.color_harmonies.visual
 
   const [form, set_form] = useState(null)
@@ -26,25 +26,29 @@ export const NuggetImage = ({ nugget, week, ...props }) => {
             : background,
       }}
     >
-      <UploadInput
-        nuggets_sheet_coords={nuggets_sheet_coords}
-        set_uploading_image={set_uploading_image}
-        uploading_image={uploading_image}
-        set_last_update={set_last_update}
-        set_image_hash={set_image_hash}
-        type={type}
-        nugget={nugget}
-        week_id={week.id}
-        color={color}
-        form={form}
-      />
-      {image_extension && (
-        <DeleteButton
-          week={week}
-          nugget={nugget}
-          set_last_update={set_last_update}
-          nuggets_sheet_coords={nuggets_sheet_coords}
-        />
+      {is_signed_in && (
+        <Fragment>
+          <UploadInput
+            nuggets_sheet_coords={nuggets_sheet_coords}
+            set_uploading_image={set_uploading_image}
+            uploading_image={uploading_image}
+            set_last_update={set_last_update}
+            set_image_hash={set_image_hash}
+            type={type}
+            nugget={nugget}
+            week_id={week.id}
+            color={color}
+            form={form}
+          />
+          {image_extension && (
+            <DeleteButton
+              week={week}
+              nugget={nugget}
+              set_last_update={set_last_update}
+              nuggets_sheet_coords={nuggets_sheet_coords}
+            />
+          )}
+        </Fragment>
       )}
     </Form>
   )
