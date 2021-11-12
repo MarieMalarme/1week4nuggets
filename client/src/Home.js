@@ -3,11 +3,24 @@ import { get_color_harmony, random } from './toolbox'
 import { int_to_letter, format_date } from './toolbox'
 import { log } from './log'
 import { Component } from './flags'
+import { Mobile } from './Mobile'
 import { WeekContent } from './WeekContent'
 import { Authentication } from './Authentication'
 import { UpdateBanner } from './UpdateBanner'
 
 const Home = () => {
+  var media_query = window.matchMedia('(max-width: 850px)')
+  const [mobile, set_mobile] = useState(media_query.matches)
+
+  useEffect(() => {
+    const update_mobile = (event) => set_mobile(event.matches)
+    media_query.addEventListener('change', update_mobile)
+  })
+
+  return mobile ? <Mobile /> : <Desktop />
+}
+
+const Desktop = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
   const [nuggets_sheet_coords, set_nuggets_sheet_coords] = useState([])
   const [gapi_loaded, set_gapi_loaded] = useState(false)
@@ -169,7 +182,7 @@ const weeks = [...Array(weeks_amount).keys()].map((index) => {
   return { id: index + 1, dates }
 })
 
-const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
+export const color_harmonies = [...Array(weeks_amount).keys()].map(() => ({
   dates: get_color_harmony(),
   visual: get_color_harmony({ darker: true }),
   navigation: get_color_harmony(),
