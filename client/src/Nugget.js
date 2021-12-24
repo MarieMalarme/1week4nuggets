@@ -152,6 +152,7 @@ const participants_types = {
   quote: 'authors',
   event: 'speakers',
   show: 'artists',
+  design: 'designers',
 }
 
 const CloseIcon =
