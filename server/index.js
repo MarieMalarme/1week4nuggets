@@ -26,7 +26,7 @@ const upload = multer({ dest: images_folder_path })
 app.post('/api/upload', upload.single('uploaded_image'), (req, res) => {
   const temp_path = req.file.path
   const file_extension = path.extname(req.file.originalname).toLowerCase()
-  const accepted_extensions = ['.png', '.jpg', '.jpeg']
+  const accepted_extensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif']
 
   if (accepted_extensions.includes(file_extension)) {
     const file_name = `${req.body.file_name}${file_extension}`
