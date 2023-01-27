@@ -14,6 +14,4 @@ atomizify({
   },
 })
 
-// console.log(classes)
-
 export const { Component, Div, Span } = flagify()

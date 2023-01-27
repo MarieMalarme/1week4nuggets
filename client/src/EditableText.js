@@ -168,7 +168,8 @@ const ScrollGradients = (props) => {
     if (fully_scrolled) return null
     const { top: ref_top, height, width } = wrapper_dimensions
     const top = direction === 'top' ? ref_top : ref_top + height - 100
-    return <Div style={{ top, width }} className={`gradient to-${direction}`} />
+    const class_name = `gradient to-${direction}`
+    return <Div key={direction} style={{ top, width }} className={class_name} />
   })
 }
 
