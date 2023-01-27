@@ -1,7 +1,8 @@
 import { log } from './log'
 
 export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
-  const { id, column, row, type, set_last_update, nuggets_sheet_coords } = props
+  const { id, column, row, type, topic } = props
+  const { set_last_update, nuggets_sheet_coords } = props
   const cell_row = row || nuggets_sheet_coords.last_row
   const cell = `${nuggets_sheet_coords.columns[column]}${cell_row}`
 
@@ -26,6 +27,12 @@ export const update_nugget_cell = async ({ new_value, week_id, ...props }) => {
         // add the type
         range: `'Nuggets'!${nuggets_sheet_coords.columns['type']}${cell_row}`,
         values: [[type]],
+        majorDimension: 'ROWS',
+      },
+      {
+        // add the topic
+        range: `'Nuggets'!${nuggets_sheet_coords.columns['topic']}${cell_row}`,
+        values: [[topic]],
         majorDimension: 'ROWS',
       },
       {

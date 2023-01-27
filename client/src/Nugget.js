@@ -6,7 +6,7 @@ import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
 export const Nugget = ({ nuggets, content, index, ...props }) => {
-  const { name, subtitle, date, link, type } = content
+  const { name, subtitle, date, link, type, topic } = content
   const { description, participants, row } = content
 
   const { hovered_nugget_index, set_hovered_nugget_index } = props
@@ -22,24 +22,26 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
 
   const variables = { is_selected, is_signed_in, nuggets_sheet_coords }
   const functions = { set_last_update, set_is_editing }
-  const states = { variables, functions, week_id, type, id }
+  const states = { variables, functions, week_id, type, topic, id }
 
   const clear_selected_nugget_index = () => set_selected_nugget_index(null)
 
-  const update_nugget_type = () => {
+  const update_nugget_tag = (current_tag, tag_type, tags) => {
     if (!is_selected) return
-    const nuggets_types = Object.keys(participants_types)
-    const type_index = nuggets_types.indexOf(type)
-    const { next_index } = update_indexes(type_index, nuggets_types.length)
+    const current_tag_index = tags.indexOf(current_tag)
+    const { next_index } = update_indexes(current_tag_index, tags.length)
+    const new_value = tags[next_index]
+
     update_nugget_cell({
-      new_value: nuggets_types[next_index],
-      type: nuggets_types[next_index],
+      id,
+      row,
+      week_id,
+      new_value,
       nuggets_sheet_coords,
       set_last_update,
-      column: 'type',
-      week_id,
-      row,
-      id,
+      type: tag_type === 'type' ? new_value : type,
+      topic: tag_type === 'topic' ? new_value : topic,
+      column: tag_type,
     })
   }
 
@@ -62,9 +64,23 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
         <CloseIcon onClick={clear_selected_nugget_index}>✕ Esc</CloseIcon>
       )}
       <SideNotes h100p={is_selected} pt15={no_selected_nugget || is_selected}>
-        <Tag c_pointer={is_selected} onClick={update_nugget_type}>
-          — {type}
-        </Tag>
+        <Tags>
+          <Tag
+            c_pointer={is_selected}
+            onClick={() => update_nugget_tag(type, 'type', nuggets_types)}
+          >
+            — {type}
+          </Tag>
+          {!is_not_selected_one && (
+            <Tag
+              mt5
+              c_pointer={is_selected}
+              onClick={() => update_nugget_tag(topic, 'topic', nuggets_topics)}
+            >
+              — {topic}
+            </Tag>
+          )}
+        </Tags>
         {is_selected && (
           <Fragment>
             <EditableText
@@ -145,15 +161,37 @@ const Participants = ({ participants, type, row, states }) => {
 
 const participants_types = {
   talk: 'speakers',
-  project: 'artists',
+  research: 'researchers',
+  project: 'designers',
   exhibition: 'artists',
   workshop: 'teachers',
   book: 'authors',
   quote: 'authors',
   event: 'speakers',
-  show: 'artists',
-  design: 'designers',
+  show: 'creators',
+  'open call': 'organizers',
 }
+
+const nuggets_types = Object.keys(participants_types)
+
+const nuggets_topics = [
+  'graphic',
+  'typeface',
+  'code',
+  'webdesign',
+  'branding',
+  'motion',
+  'electronics',
+  'textile',
+  'design',
+  'illustration',
+  'editorial',
+  'art',
+  'material',
+  'photography',
+  'dance',
+  '3D print',
+]
 
 const CloseIcon =
   Component.pa5.absolute.t20.r20.wm_v_rl.text_upright.ls2.fs10.uppercase.c_pointer.div()
@@ -161,6 +199,7 @@ const Wrapper = Component.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const SideNotes =
   Component.relative.flex.flex_column.ai_flex_start.flex_shrink0.w100.mr30.w100.div()
-const Tag = Component.uppercase.ls2.fs10.span()
+const Tags = Component.uppercase.ls2.fs10.span()
+const Tag = Component.div()
 const List = Component.fs13.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()

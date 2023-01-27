@@ -16,7 +16,7 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
     const matching_nugget = week.nuggets.find(
       (nugget) => Number(nugget.id) === get_nugget_id(week.id, index),
     )
-    return matching_nugget || { type: nuggets_types[index] }
+    return matching_nugget || { type: nuggets_types[index], topic: 'graphic' }
   })
 
   // set keyboard events' listeners
