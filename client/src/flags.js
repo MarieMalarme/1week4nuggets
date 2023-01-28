@@ -11,6 +11,9 @@ atomizify({
     clamp1: '-webkit-line-clamp: 1',
     b_rad: 'border-radius: 30px 0 0 30px',
     pb7: 'padding-bottom: 7px',
+    pt2: 'padding-top: 2px',
+    pv4: 'padding: 3px 0',
+    ml18: 'margin-left: 18px',
   },
 })
 

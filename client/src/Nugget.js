@@ -1,7 +1,6 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Component } from './flags'
 import { get_nugget_id, update_nugget_cell } from './data'
-import { update_indexes } from './toolbox'
 import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
@@ -26,12 +25,8 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
 
   const clear_selected_nugget_index = () => set_selected_nugget_index(null)
 
-  const update_nugget_tag = (current_tag, tag_type, tags) => {
+  const update_nugget_tag = (new_value, tag_type) => {
     if (!is_selected) return
-    const current_tag_index = tags.indexOf(current_tag)
-    const { next_index } = update_indexes(current_tag_index, tags.length)
-    const new_value = tags[next_index]
-
     update_nugget_cell({
       id,
       row,
@@ -39,8 +34,6 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
       new_value,
       nuggets_sheet_coords,
       set_last_update,
-      type: tag_type === 'type' ? new_value : type,
-      topic: tag_type === 'topic' ? new_value : topic,
       column: tag_type,
     })
   }
@@ -65,20 +58,21 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
       )}
       <SideNotes h100p={is_selected} pt15={no_selected_nugget || is_selected}>
         <Tags>
-          <Tag
-            c_pointer={is_selected}
-            onClick={() => update_nugget_tag(type, 'type', nuggets_types)}
-          >
-            — {type}
-          </Tag>
+          <TagSelect
+            tag_type="type"
+            current_tag={type}
+            tags={nuggets_types}
+            is_selected={is_selected}
+            update_nugget_tag={update_nugget_tag}
+          />
           {!is_not_selected_one && (
-            <Tag
-              mt5
-              c_pointer={is_selected}
-              onClick={() => update_nugget_tag(topic, 'topic', nuggets_topics)}
-            >
-              — {topic}
-            </Tag>
+            <TagSelect
+              tag_type="topic"
+              current_tag={topic}
+              tags={nuggets_topics}
+              is_selected={is_selected}
+              update_nugget_tag={update_nugget_tag}
+            />
           )}
         </Tags>
         {is_selected && (
@@ -143,6 +137,38 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
   )
 }
 
+const TagSelect = ({ tags, tag_type, current_tag, ...props }) => {
+  const [is_open, set_is_open] = useState(false)
+  const { update_nugget_tag, is_selected } = props
+  const options_tags = tags.filter((tag) => tag !== current_tag)
+
+  const open_select = () => set_is_open(true)
+  const close_select = () => set_is_open(false)
+  const select_tag = (tag) => {
+    update_nugget_tag(tag, tag_type)
+    close_select()
+  }
+
+  return (
+    <Tag
+      mt5={tag_type === 'topic'}
+      onMouseEnter={open_select}
+      onMouseLeave={close_select}
+    >
+      — {current_tag}
+      {is_open && is_selected && (
+        <Options>
+          {options_tags.map((tag, index) => (
+            <Option key={index} onClick={() => select_tag(tag)}>
+              {tag}
+            </Option>
+          ))}
+        </Options>
+      )}
+    </Tag>
+  )
+}
+
 const Participants = ({ participants, type, row, states }) => {
   const label = participants_types[type]
 
@@ -158,21 +184,6 @@ const Participants = ({ participants, type, row, states }) => {
     </List>
   )
 }
-
-const participants_types = {
-  talk: 'speakers',
-  research: 'researchers',
-  project: 'designers',
-  exhibition: 'artists',
-  workshop: 'teachers',
-  book: 'authors',
-  quote: 'authors',
-  event: 'speakers',
-  show: 'creators',
-  'open call': 'organizers',
-}
-
-const nuggets_types = Object.keys(participants_types)
 
 const nuggets_topics = [
   'graphic',
@@ -193,13 +204,30 @@ const nuggets_topics = [
   '3D print',
 ]
 
+const participants_types = {
+  talk: 'speakers',
+  research: 'researchers',
+  project: 'designers',
+  exhibition: 'artists',
+  workshop: 'teachers',
+  book: 'authors',
+  quote: 'authors',
+  event: 'speakers',
+  show: 'creators',
+  'open call': 'organizers',
+}
+
+const nuggets_types = Object.keys(participants_types)
+
 const CloseIcon =
   Component.pa5.absolute.t20.r20.wm_v_rl.text_upright.ls2.fs10.uppercase.c_pointer.div()
 const Wrapper = Component.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const SideNotes =
   Component.relative.flex.flex_column.ai_flex_start.flex_shrink0.w100.mr30.w100.div()
-const Tags = Component.uppercase.ls2.fs10.span()
-const Tag = Component.ws_nowrap.div()
+const Tags = Component.uppercase.ls2.fs10.div()
+const Tag = Component.ws_nowrap.c_pointer.div()
+const Options = Component.pt2.zi10.bg_white.absolute.div()
+const Option = Component.pv4.ml18.o40.hover_o100.div()
 const List = Component.fs13.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()
