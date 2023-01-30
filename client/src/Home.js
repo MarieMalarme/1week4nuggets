@@ -5,7 +5,7 @@ import { log } from './log'
 import { Component } from './flags'
 import { Mobile } from './Mobile'
 import { WeekContent } from './WeekContent'
-import { Authentication } from './Authentication'
+import { Menu } from './Menu'
 import { UpdateBanner } from './UpdateBanner'
 
 const Home = () => {
@@ -85,7 +85,7 @@ const Desktop = () => {
 
   return (
     <Page>
-      <Authentication is_signed_in={is_signed_in} />
+      <Menu is_signed_in={is_signed_in} />
       <UpdateBanner last_update={last_update} />
       <WeekContent
         weeks_data={weeks_data}
