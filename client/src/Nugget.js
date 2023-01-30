@@ -197,11 +197,20 @@ const nuggets_topics = [
   'design',
   'illustration',
   'editorial',
-  'art',
   'material',
   'photography',
   'dance',
   '3D print',
+  'art',
+  '3D',
+  'game',
+  'architecture',
+  'dataviz',
+  'ceramics',
+  'mapping',
+  'painting',
+  'science',
+  'printing',
 ]
 
 const participants_types = {
@@ -215,6 +224,7 @@ const participants_types = {
   event: 'speakers',
   show: 'creators',
   'open call': 'organizers',
+  people: 'figures',
 }
 
 const nuggets_types = Object.keys(participants_types)
