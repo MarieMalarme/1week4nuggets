@@ -238,6 +238,6 @@ const SideNotes =
 const Tags = Component.uppercase.ls2.fs10.div()
 const Tag = Component.ws_nowrap.c_pointer.div()
 const Options = Component.pt2.zi10.bg_white.absolute.div()
-const Option = Component.pv4.ml18.o40.hover_o100.div()
+const Option = Component.pv3.ml18.o40.hover_o100.div()
 const List = Component.fs13.flex.ai_flex_start.div()
 const Heading = Component.capitalize.bb.mr30.span()

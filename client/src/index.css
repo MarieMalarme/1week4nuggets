@@ -125,3 +125,16 @@ button {
     opacity: 1;
   }
 }
+
+#search-modal {
+  box-shadow: 0 0 60px lime;
+}
+
+#search-modal input {
+  color: lime;
+}
+
+#search-modal ::selection {
+  background: var(--grey7);
+  color: lime;
+}
