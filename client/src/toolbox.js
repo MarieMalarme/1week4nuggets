@@ -3,9 +3,14 @@
 // example 2: int_to_letter(1) → 'B'
 // example 3: int_to_letter(5) → 'F'
 export const int_to_letter = (int) => String.fromCharCode(65 + int)
+export const pad_start_0 = (int) => int.toString().padStart(2, '0')
 
-export const format_date = (date) =>
-  new Date(date).toLocaleString().slice(0, 10).split('/').join(' ')
+export const format_date = (timestamp) => {
+  const day = new Date(timestamp).getDate()
+  const month = new Date(timestamp).getMonth() + 1
+  const year = new Date(timestamp).getFullYear()
+  return `${pad_start_0(day)} ${pad_start_0(month)} ${year}`
+}
 
 export const random = (min, max) => {
   min = Math.ceil(min)
