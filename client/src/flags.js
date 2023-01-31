@@ -13,6 +13,7 @@ atomizify({
     pb7: 'padding-bottom: 7px',
     pv3: 'padding: 3px 0',
     ml18: 'margin-left: 18px',
+    lime: 'color: lime',
   },
 })
 

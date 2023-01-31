@@ -5,6 +5,9 @@
 export const int_to_letter = (int) => String.fromCharCode(65 + int)
 export const pad_start_0 = (int) => int.toString().padStart(2, '0')
 
+export const includes_pattern = (string, pattern) =>
+  string?.toLowerCase().includes(pattern?.toLowerCase())
+
 export const format_date = (timestamp) => {
   const day = new Date(timestamp).getDate()
   const month = new Date(timestamp).getMonth() + 1

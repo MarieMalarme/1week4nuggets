@@ -22,6 +22,7 @@ const Home = () => {
 
 const Desktop = () => {
   const [weeks_data, set_weeks_data] = useState('loading')
+  const [all_nuggets, set_all_nuggets] = useState([])
   const [nuggets_sheet_coords, set_nuggets_sheet_coords] = useState([])
   const [gapi_loaded, set_gapi_loaded] = useState(false)
   const [is_signed_in, set_is_signed_in] = useState(false)
@@ -67,6 +68,7 @@ const Desktop = () => {
         // format the fetched data and set it to the state
         const formatted_data = format_spreadsheet_data(response)
         set_weeks_data(formatted_data.nuggets_per_week)
+        set_all_nuggets(formatted_data.all_nuggets)
         set_nuggets_sheet_coords(formatted_data.nuggets_sheet_coords)
       } catch (error) {
         log.error(error, 'querying the spreadsheet')
@@ -85,7 +87,7 @@ const Desktop = () => {
 
   return (
     <Page>
-      <Menu is_signed_in={is_signed_in} />
+      <Menu is_signed_in={is_signed_in} nuggets={all_nuggets} />
       <UpdateBanner last_update={last_update} />
       <WeekContent
         weeks_data={weeks_data}
@@ -146,6 +148,7 @@ const format_spreadsheet_data = (response) => {
 
   return {
     nuggets_per_week,
+    all_nuggets: nuggets,
     nuggets_sheet_coords: {
       columns: nuggets_sheet_columns,
       last_row: rows.length + 2,
