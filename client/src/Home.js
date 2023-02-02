@@ -86,14 +86,43 @@ const Desktop = () => {
     return <Feedback>No data in the spreadsheet!</Feedback>
 
   return (
+    <Landing
+      all_nuggets={all_nuggets}
+      weeks_data={weeks_data}
+      nuggets_sheet_coords={nuggets_sheet_coords}
+      is_signed_in={is_signed_in}
+      last_update={last_update}
+      set_last_update={set_last_update}
+    />
+  )
+}
+
+const Landing = (props) => {
+  const { all_nuggets, weeks_data, nuggets_sheet_coords } = props
+  const { is_signed_in, last_update, set_last_update } = props
+  const latest_week_id = Math.max(...weeks_data.map((week) => week.id))
+
+  const [selected_nugget, set_selected_nugget] = useState(null)
+  const [selected_week_id, set_selected_week_id] = useState(latest_week_id)
+
+  return (
     <Page>
-      <Menu is_signed_in={is_signed_in} nuggets={all_nuggets} />
+      <Menu
+        nuggets={all_nuggets}
+        is_signed_in={is_signed_in}
+        set_selected_week_id={set_selected_week_id}
+        set_selected_nugget={set_selected_nugget}
+      />
       <UpdateBanner last_update={last_update} />
       <WeekContent
         weeks_data={weeks_data}
         nuggets_sheet_coords={nuggets_sheet_coords}
         is_signed_in={is_signed_in}
         set_last_update={set_last_update}
+        selected_nugget={selected_nugget}
+        set_selected_nugget={set_selected_nugget}
+        selected_week_id={selected_week_id}
+        set_selected_week_id={set_selected_week_id}
       />
     </Page>
   )

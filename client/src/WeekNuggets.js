@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Component } from './flags'
 import { update_indexes } from './toolbox'
-import { get_nugget_id, nuggets_types } from './data'
+import { get_nugget_id, nuggets_types as types } from './data'
 import { Nugget } from './Nugget'
 
 export const WeekNuggets = ({ week, weeks_data, ...props }) => {
-  const { selected_week_index, set_selected_week_index } = props
-  const { set_selected_nugget_index } = props
+  const { selected_week_id, set_selected_week_id } = props
+  const { selected_nugget, set_selected_nugget } = props
 
   const [hovered_nugget_index, set_hovered_nugget_index] = useState(null)
   const [is_editing, set_is_editing] = useState(false)
@@ -14,10 +14,16 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
   const nuggets = [...Array(4).keys()].map((index) => {
     // get the week nugget if it exists or set a placeholder with a default type
     const matching_nugget = week.nuggets.find(
-      (nugget) => Number(nugget.id) === get_nugget_id(week.id, index),
+      (nugget) => Number(nugget.id) === get_nugget_id(week.id, index + 1),
     )
-    return matching_nugget || { type: nuggets_types[index], topic: 'graphic' }
+    return matching_nugget || { id: null, type: types[index], topic: 'graphic' }
   })
+
+  const set_selected_nugget_index_from_id = () => {
+    const current_nugget = nuggets.find(({ id }) => id === selected_nugget.id)
+    const current_nugget_index = nuggets.indexOf(current_nugget) + 1
+    set_selected_nugget({ index: current_nugget_index })
+  }
 
   // set keyboard events' listeners
   const handle_keydown = (event, index) => {
@@ -27,14 +33,18 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
       // change week with keyboard's left & right arrows
       case 'ArrowLeft': {
         const { length } = weeks_data
-        const { prev_index } = update_indexes(selected_week_index, length)
-        set_selected_week_index(prev_index)
+        const { next_index } = update_indexes(selected_week_id, length)
+        set_selected_week_id(next_index)
+        if (selected_nugget?.id) set_selected_nugget_index_from_id()
+
         break
       }
       case 'ArrowRight': {
         const { length } = weeks_data
-        const { next_index } = update_indexes(selected_week_index, length)
-        set_selected_week_index(next_index)
+        const { prev_index } = update_indexes(selected_week_id, length)
+        set_selected_week_id(prev_index)
+        if (selected_nugget?.id) set_selected_nugget_index_from_id()
+
         break
       }
 
@@ -52,11 +62,11 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
 
       // change selected nugget with keyboard's Enter
       case 'Enter':
-        set_selected_nugget_index(hovered_nugget_index)
+        set_selected_nugget({ index: hovered_nugget_index })
         break
       // clear selected nugget with keyboard's Escape
       case 'Escape':
-        set_selected_nugget_index(null)
+        set_selected_nugget(null)
         break
 
       default:
@@ -71,14 +81,16 @@ export const WeekNuggets = ({ week, weeks_data, ...props }) => {
 
   return (
     <Nuggets>
-      {nuggets.map((content, index) => (
+      {nuggets.map((nugget, index) => (
         <Nugget
-          key={`${content.type}-${index}`}
-          index={index}
+          key={`${nugget.type}-${index}`}
+          nugget={nugget}
           nuggets={nuggets}
-          content={content}
           week_id={week.id}
+          index={index + 1}
           font={week.fonts[index]}
+          selected_nugget={selected_nugget}
+          set_selected_nugget={set_selected_nugget}
           hovered_nugget_index={hovered_nugget_index}
           set_hovered_nugget_index={set_hovered_nugget_index}
           set_is_editing={set_is_editing}

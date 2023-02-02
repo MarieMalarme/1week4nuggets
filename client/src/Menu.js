@@ -2,7 +2,8 @@ import { Fragment, useState, useEffect } from 'react'
 import { Component, Span } from './flags'
 import { includes_pattern } from './toolbox'
 
-export const Menu = ({ nuggets, is_signed_in }) => {
+export const Menu = ({ nuggets, is_signed_in, ...props }) => {
+  const { set_selected_nugget, set_selected_week_id } = props
   const [input, set_input] = useState(null)
   const [is_search_open, set_is_search_open] = useState(false)
 
@@ -12,9 +13,10 @@ export const Menu = ({ nuggets, is_signed_in }) => {
   }, [is_search_open, input])
 
   const open_search = () => set_is_search_open(true)
-  const close_search = (event) => {
+  const close_search = () => set_is_search_open(false)
+  const escape_search = (event) => {
     if (event.key !== 'Escape') return
-    set_is_search_open(false)
+    close_search()
   }
 
   return (
@@ -26,13 +28,19 @@ export const Menu = ({ nuggets, is_signed_in }) => {
 
       <SearchPanelWrapper
         id="search-modal"
-        onKeyDown={close_search}
+        onKeyDown={escape_search}
         w0={!is_search_open}
         w40p={is_search_open}
         pa50={is_search_open}
       >
         {is_search_open && (
-          <SearchPanel nuggets={nuggets} set_input={set_input} />
+          <SearchPanel
+            nuggets={nuggets}
+            set_input={set_input}
+            close_search={close_search}
+            set_selected_nugget={set_selected_nugget}
+            set_selected_week_id={set_selected_week_id}
+          />
         )}
       </SearchPanelWrapper>
     </Fragment>
@@ -66,7 +74,8 @@ const Authentication = ({ is_signed_in }) => {
   )
 }
 
-const SearchPanel = ({ nuggets, set_input }) => {
+const SearchPanel = ({ nuggets, set_input, close_search, ...props }) => {
+  const { set_selected_nugget, set_selected_week_id } = props
   const [search_pattern, set_search_pattern] = useState()
   const [wrapper_ref, set_wrapper_ref] = useState(null)
   const [has_scrolled, set_has_scrolled] = useState(false)
@@ -83,23 +92,25 @@ const SearchPanel = ({ nuggets, set_input }) => {
   return (
     <Fragment>
       <Input
-        onInput={(event) => set_search_pattern(event.target.value)}
+        type="text"
         elemRef={set_input}
         placeholder="Looking for..."
-        type="text"
+        onInput={(event) => set_search_pattern(event.target.value)}
       />
 
       <SearchResults
         elemRef={set_wrapper_ref}
         onScroll={() => set_has_scrolled(wrapper_ref?.scrollTop > 0)}
-        id="search-results"
       >
         {has_scrolled && <div className="text-overflow-gradient" />}
         {search_results.map((nugget) => (
           <SearchResult
             key={nugget.id}
             nugget={nugget}
+            close_search={close_search}
             search_pattern={search_pattern}
+            set_selected_nugget={set_selected_nugget}
+            set_selected_week_id={set_selected_week_id}
           />
         ))}
         {search_pattern && !search_results.length && 'No results found!'}
@@ -108,10 +119,11 @@ const SearchPanel = ({ nuggets, set_input }) => {
   )
 }
 
-const SearchResult = ({ nugget, search_pattern }) => {
+const SearchResult = ({ nugget, search_pattern, close_search, ...props }) => {
+  const { set_selected_nugget, set_selected_week_id } = props
+  const [is_hovered, set_is_hovered] = useState(false)
   const { name, subtitle, participants } = nugget
   const searched_fields = [name, subtitle, participants]
-  const [is_hovered, set_is_hovered] = useState(false)
 
   // check if a string contains matches of the searched pattern
   // if it does, split the string to indicate which chunks
@@ -126,6 +138,12 @@ const SearchResult = ({ nugget, search_pattern }) => {
     return text_chunks
   }
 
+  const select_nugget = () => {
+    set_selected_week_id(Number(nugget.week_id))
+    set_selected_nugget({ id: nugget.id })
+    close_search()
+  }
+
   return (
     <Result
       onMouseEnter={() => set_is_hovered(true)}
@@ -135,7 +153,7 @@ const SearchResult = ({ nugget, search_pattern }) => {
       {searched_fields.map((field, index) => {
         const pattern_matches = match_pattern(field)
         return (
-          <ResultField key={index}>
+          <ResultField onClick={select_nugget} key={index}>
             {pattern_matches?.map(({ chunk, matched }, index) => (
               <Span key={index} lime={matched}>
                 {chunk}

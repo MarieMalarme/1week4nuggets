@@ -145,5 +145,5 @@ button {
   position: fixed;
   animation: 0.3s fade-in;
   pointer-events: none;
-  background: linear-gradient(var(--grey3), transparent);
+  background: linear-gradient(var(--grey2), transparent);
 }

@@ -2,17 +2,18 @@ import { Component } from './flags'
 import { get_nugget_id, nuggets_types } from './data'
 import { NuggetImage } from './NuggetImage'
 
-export const VisualSection = ({ week, selected_nugget_index, ...props }) => {
+export const VisualSection = ({ week, selected_nugget, ...props }) => {
   const { background } = week.color_harmonies.visual
 
   // check if the nugget already exists - if not, create a default nugget object with id & type
-  const selected_nugget_id = get_nugget_id(week.id, selected_nugget_index)
-  const selected_nugget = week.nuggets.find(
-    (nugget) => Number(nugget.id) === selected_nugget_id,
-  ) || { id: selected_nugget_id, type: nuggets_types[selected_nugget_index] }
+  const selected_nugget_id =
+    selected_nugget?.id || get_nugget_id(week.id, selected_nugget?.index)
+  const nugget = week.nuggets.find(
+    (nugget) => Number(nugget.id) === Number(selected_nugget_id),
+  ) || { id: selected_nugget_id, type: nuggets_types[selected_nugget?.index] }
 
   return selected_nugget_id ? (
-    <NuggetImage nugget={selected_nugget} week={week} {...props} />
+    <NuggetImage nugget={nugget} week={week} {...props} />
   ) : (
     <Presentation style={{ background }}>
       <Title>1 week, 4 nuggets</Title>

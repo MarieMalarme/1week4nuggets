@@ -4,26 +4,28 @@ import { get_nugget_id, update_nugget_cell } from './data'
 import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
-export const Nugget = ({ nuggets, content, index, ...props }) => {
-  const { name, subtitle, date, link, type, topic } = content
-  const { description, participants, row } = content
+export const Nugget = ({ nuggets, nugget, index, ...props }) => {
+  const { name, subtitle, date, link, type, topic } = nugget
+  const { description, participants, row } = nugget
 
   const { hovered_nugget_index, set_hovered_nugget_index } = props
-  const { selected_nugget_index, set_selected_nugget_index } = props
+  const { selected_nugget, set_selected_nugget } = props
   const { is_signed_in, set_is_editing, set_last_update } = props
   const { nuggets_sheet_coords, week_id, font } = props
 
-  const id = content.id || get_nugget_id(week_id, index)
+  const id = nugget.id || get_nugget_id(week_id, index)
   const is_hovered = hovered_nugget_index === index
-  const is_selected = selected_nugget_index === index
-  const no_selected_nugget = selected_nugget_index === null
-  const is_not_selected_one = selected_nugget_index !== null && !is_selected
+  const matches_id = selected_nugget?.id === id
+  const matches_index = selected_nugget?.index === index
+  const is_selected = matches_id || matches_index
+  const no_selected_nugget = selected_nugget === null
+  const is_not_selected_one = selected_nugget && !is_selected
 
   const variables = { is_selected, is_signed_in, nuggets_sheet_coords }
   const functions = { set_last_update, set_is_editing }
   const states = { variables, functions, week_id, type, topic, id }
 
-  const clear_selected_nugget_index = () => set_selected_nugget_index(null)
+  const clear_selected_nugget_index = () => set_selected_nugget(null)
 
   const update_nugget_tag = (new_value, tag_type) => {
     if (!is_selected) return
@@ -42,12 +44,12 @@ export const Nugget = ({ nuggets, content, index, ...props }) => {
     <Wrapper
       key={`nugget-${type}`}
       onMouseOver={() => set_hovered_nugget_index(index)}
-      onClick={() => !is_selected && set_selected_nugget_index(index)}
+      onClick={() => !is_selected && set_selected_nugget({ index: index })}
       c_pointer={no_selected_nugget || !is_selected}
       pv30={no_selected_nugget || is_selected}
       bg_grey9={is_hovered && !is_selected}
       white={is_hovered && !is_selected}
-      bb={index !== nuggets.length - 1}
+      bb={index !== nuggets.length}
       ai_center={is_not_selected_one}
       h5p={is_not_selected_one}
       h25p={no_selected_nugget}
