@@ -14,6 +14,8 @@ atomizify({
     pv3: 'padding: 3px 0',
     ml18: 'margin-left: 18px',
     lime: 'color: lime',
+    ratio1: 'aspect-ratio: 1 / 1',
+    line_clamp: `display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden`,
   },
 })
 

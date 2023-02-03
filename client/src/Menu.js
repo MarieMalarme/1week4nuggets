@@ -1,48 +1,34 @@
-import { Fragment, useState, useEffect } from 'react'
-import { Component, Span } from './flags'
-import { includes_pattern } from './toolbox'
+import { Fragment, useState } from 'react'
+import { Component } from './flags'
+import { SearchPanel } from './SearchPanel'
+import { VisualIndex } from './VisualIndex'
 
-export const Menu = ({ nuggets, is_signed_in, ...props }) => {
-  const { set_selected_nugget, set_selected_week_id } = props
-  const [input, set_input] = useState(null)
+export const Menu = ({ nuggets, is_signed_in, select_nugget }) => {
   const [is_search_open, set_is_search_open] = useState(false)
-
-  useEffect(() => {
-    if (!input || !is_search_open) return
-    input.focus()
-  }, [is_search_open, input])
-
-  const open_search = () => set_is_search_open(true)
-  const close_search = () => set_is_search_open(false)
-  const escape_search = (event) => {
-    if (event.key !== 'Escape') return
-    close_search()
-  }
+  const [is_index_open, set_is_index_open] = useState(false)
 
   return (
     <Fragment>
       <Nav>
-        <SearchIcon open_search={open_search} />
+        <SearchIcon open_search={() => set_is_search_open(true)} />
+        <IndexIcon open_index={() => set_is_index_open(true)} />
         <Authentication is_signed_in={is_signed_in} />
       </Nav>
 
-      <SearchPanelWrapper
-        id="search-modal"
-        onKeyDown={escape_search}
-        w0={!is_search_open}
-        w40p={is_search_open}
-        pa50={is_search_open}
-      >
-        {is_search_open && (
-          <SearchPanel
-            nuggets={nuggets}
-            set_input={set_input}
-            close_search={close_search}
-            set_selected_nugget={set_selected_nugget}
-            set_selected_week_id={set_selected_week_id}
-          />
-        )}
-      </SearchPanelWrapper>
+      <VisualIndex
+        nuggets={nuggets}
+        is_open={is_index_open}
+        set_is_open={set_is_index_open}
+        select_nugget={select_nugget}
+        set_is_index_open={set_is_index_open}
+      />
+
+      <SearchPanel
+        nuggets={nuggets}
+        select_nugget={select_nugget}
+        is_open={is_search_open}
+        set_is_open={set_is_search_open}
+      />
     </Fragment>
   )
 }
@@ -64,6 +50,23 @@ const SearchIcon = ({ open_search }) => (
   </Svg>
 )
 
+const IndexIcon = ({ open_index }) => {
+  return (
+    <Svg
+      onClick={open_index}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 130 130"
+      height={24}
+      width={24}
+    >
+      <path
+        fill="white"
+        d="M20.11 23.5h12v12h-12zM58 23.5h12v12H58zM95.89 23.5h12v12h-12zM20.11 59h12v12h-12zM58 59h12v12H58zM95.89 59h12v12h-12zM20.11 94.5h12v12h-12zM58 94.5h12v12H58zM95.89 94.5h12v12h-12z"
+      />
+    </Svg>
+  )
+}
+
 const Authentication = ({ is_signed_in }) => {
   const { signIn, signOut } = window.gapi.auth2.getAuthInstance()
 
@@ -74,106 +77,7 @@ const Authentication = ({ is_signed_in }) => {
   )
 }
 
-const SearchPanel = ({ nuggets, set_input, close_search, ...props }) => {
-  const { set_selected_nugget, set_selected_week_id } = props
-  const [search_pattern, set_search_pattern] = useState()
-  const [wrapper_ref, set_wrapper_ref] = useState(null)
-  const [has_scrolled, set_has_scrolled] = useState(false)
-
-  const search_results = search_pattern
-    ? nuggets.filter(
-        ({ name, subtitle, participants }) =>
-          includes_pattern(name, search_pattern) ||
-          includes_pattern(subtitle, search_pattern) ||
-          includes_pattern(participants, search_pattern),
-      )
-    : []
-
-  return (
-    <Fragment>
-      <Input
-        type="text"
-        elemRef={set_input}
-        placeholder="Looking for..."
-        onInput={(event) => set_search_pattern(event.target.value)}
-      />
-
-      <SearchResults
-        elemRef={set_wrapper_ref}
-        onScroll={() => set_has_scrolled(wrapper_ref?.scrollTop > 0)}
-      >
-        {has_scrolled && <div className="text-overflow-gradient" />}
-        {search_results.map((nugget) => (
-          <SearchResult
-            key={nugget.id}
-            nugget={nugget}
-            close_search={close_search}
-            search_pattern={search_pattern}
-            set_selected_nugget={set_selected_nugget}
-            set_selected_week_id={set_selected_week_id}
-          />
-        ))}
-        {search_pattern && !search_results.length && 'No results found!'}
-      </SearchResults>
-    </Fragment>
-  )
-}
-
-const SearchResult = ({ nugget, search_pattern, close_search, ...props }) => {
-  const { set_selected_nugget, set_selected_week_id } = props
-  const [is_hovered, set_is_hovered] = useState(false)
-  const { name, subtitle, participants } = nugget
-  const searched_fields = [name, subtitle, participants]
-
-  // check if a string contains matches of the searched pattern
-  // if it does, split the string to indicate which chunks
-  // match the pattern in order to highlight them
-  const match_pattern = (string) => {
-    const pattern = search_pattern.toLowerCase()
-    if (!string.toLowerCase().includes(pattern)) return undefined
-    const regex = new RegExp(String.raw`(${pattern})`, 'i')
-    const text_chunks = string
-      .split(regex)
-      .map((chunk) => ({ chunk, matched: chunk.toLowerCase() === pattern }))
-    return text_chunks
-  }
-
-  const select_nugget = () => {
-    set_selected_week_id(Number(nugget.week_id))
-    set_selected_nugget({ id: nugget.id })
-    close_search()
-  }
-
-  return (
-    <Result
-      onMouseEnter={() => set_is_hovered(true)}
-      onMouseLeave={() => set_is_hovered(false)}
-      black={is_hovered}
-    >
-      {searched_fields.map((field, index) => {
-        const pattern_matches = match_pattern(field)
-        return (
-          <ResultField onClick={select_nugget} key={index}>
-            {pattern_matches?.map(({ chunk, matched }, index) => (
-              <Span key={index} lime={matched}>
-                {chunk}
-              </Span>
-            ))}
-            {!pattern_matches && field}
-          </ResultField>
-        )
-      })}
-    </Result>
-  )
-}
-
 const Nav = Component.flex.ai_center.blend_difference.zi1.fixed.t20.r20.nav()
 const Svg = Component.mr20.c_pointer.svg()
-const SearchPanelWrapper =
-  Component.fs40.anim_width.zi10.fixed.t0.r0.h100vh.bg_grey2.div()
-const Input = Component.w100p.bg_none.ba0.ol_none.fs50.input()
-const SearchResults = Component.of_scroll.pb50.mt50.h100p.div()
-const Result = Component.grey6.c_pointer.mb50.div()
-const ResultField = Component.mb10.div()
 const Button =
   Component.h30.flex.ai_center.jc_center.white.b_white.c_pointer.fw700.shadow_a_s.ba.b_rad20.uppercase.ls1.fs9.div()

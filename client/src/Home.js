@@ -105,13 +105,17 @@ const Landing = (props) => {
   const [selected_nugget, set_selected_nugget] = useState(null)
   const [selected_week_id, set_selected_week_id] = useState(latest_week_id)
 
+  const select_nugget = (nugget) => {
+    set_selected_week_id(Number(nugget.week_id))
+    set_selected_nugget({ id: nugget.id })
+  }
+
   return (
     <Page>
       <Menu
         nuggets={all_nuggets}
         is_signed_in={is_signed_in}
-        set_selected_week_id={set_selected_week_id}
-        set_selected_nugget={set_selected_nugget}
+        select_nugget={select_nugget}
       />
       <UpdateBanner last_update={last_update} />
       <WeekContent
