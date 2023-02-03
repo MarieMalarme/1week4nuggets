@@ -75,6 +75,6 @@ const Image = ({ nugget, open_nugget }) => {
 
 const Images =
   Component.pa50.ofy_scroll.grid.fixed.zi20.bg_white.w100vw.h100vh.div()
-const Cell = Component.ratio1.c_pointer.w100p.h100p.div()
+const Cell = Component.ratio1.c_pointer.w100p.h100p.min_w100p.div()
 const Info = Component.fs25.pa25.flex.ai_center.jc_center.h50p.text_center.div()
 const Text = Component.line_clamp.div()
