@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Component } from './flags'
 import { get_nugget_id, update_nugget_cell } from './data'
+import { CloseIcon } from './components'
 import { EditableText } from './EditableText'
 import { Hyperlink } from './Hyperlink'
 
@@ -55,9 +56,7 @@ export const Nugget = ({ nuggets, nugget, index, ...props }) => {
       h25p={no_selected_nugget}
       h85p={is_selected}
     >
-      {is_selected && (
-        <CloseIcon onClick={clear_selected_nugget_index}>✕ Esc</CloseIcon>
-      )}
+      {is_selected && <CloseIcon close={clear_selected_nugget_index} />}
       <SideNotes h100p={is_selected} pt15={no_selected_nugget || is_selected}>
         <Tags>
           <TagSelect
@@ -231,8 +230,6 @@ const participants_types = {
 
 const nuggets_types = Object.keys(participants_types)
 
-const CloseIcon =
-  Component.pa5.absolute.t20.r20.wm_v_rl.text_upright.ls2.fs10.uppercase.c_pointer.div()
 const Wrapper = Component.relative.ph30.flex.ai_flex_start.div()
 const Content = Component.w100p.flex.flex_column.mr100.div()
 const SideNotes =

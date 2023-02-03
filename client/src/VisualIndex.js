@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Component } from './flags'
 import { get_color_harmony } from './toolbox'
+import { CloseIcon } from './components'
 
 export const VisualIndex = ({ nuggets, select_nugget, ...props }) => {
   const [wrapper, set_wrapper] = useState(null)
@@ -30,8 +31,9 @@ export const VisualIndex = ({ nuggets, select_nugget, ...props }) => {
       visible={is_open}
       elemRef={set_wrapper}
       onKeyDown={escape_index}
-      style={{ gridTemplateColumns: 'repeat(5, 1fr)', gridGap: '30px' }}
+      style={{ gridTemplateColumns: 'repeat(5, 1fr)', gridGap: '50px' }}
     >
+      <CloseIcon close={close_index} fixed />
       {reversed_nuggets.map((nugget) => (
         <Image nugget={nugget} open_nugget={open_nugget} />
       ))}
@@ -72,7 +74,7 @@ const Image = ({ nugget, open_nugget }) => {
 }
 
 const Images =
-  Component.pa30.ofy_scroll.grid.fixed.zi20.bg_white.w100vw.h100vh.div()
+  Component.pa50.ofy_scroll.grid.fixed.zi20.bg_white.w100vw.h100vh.div()
 const Cell = Component.ratio1.c_pointer.w100p.h100p.div()
 const Info = Component.fs25.pa25.flex.ai_center.jc_center.h50p.text_center.div()
 const Text = Component.line_clamp.div()

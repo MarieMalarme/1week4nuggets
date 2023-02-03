@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from 'react'
 import { includes_pattern } from './toolbox'
 import { Component, Span } from './flags'
+import { CloseIcon } from './components'
 
 export const SearchPanel = ({ nuggets, select_nugget, ...props }) => {
   const [input, set_input] = useState(null)
@@ -48,6 +49,7 @@ export const SearchPanel = ({ nuggets, select_nugget, ...props }) => {
     >
       {is_open && (
         <Fragment>
+          <CloseIcon close={close_search} />
           <Input
             type="text"
             elemRef={set_input}
